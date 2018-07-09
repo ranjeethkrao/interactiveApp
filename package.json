@@ -56,7 +56,6 @@
     "mysql": "^2.14.1",
     "ng2-daterangepicker": "^2.0.12",
     "ng2-validation": "^4.2.0",
-    "ngx-chips": "^1.5.3",
     "node-cron": "^1.2.1",
     "perfect-scrollbar": "^0.8.1",
     "popper.js": "^1.12.5",

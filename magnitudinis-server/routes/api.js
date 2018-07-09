@@ -1,15 +1,15 @@
 const express = require('express');
-const mysql = require('mysql');
+// const mysql = require('mysql');
 const firebase = require('firebase-admin');
 const serviceAccount = require('../firebase-auth/magnitudinis-firebase-adminsdk-sicyx-84527be3da.json');
 const router = express.Router();
 
 //Connect to mysql database
-const connection = mysql.createConnection({
+/* const connection = mysql.createConnection({
     host: 'localhost',
-    user: '<username>',
-    password: '<password>',
-    database: '<database_name>'
+    user: 'magnitudinis',
+    password: 'magnitudinis',
+    database: 'magnitudinis'
 });
 
 connection.connect((err) => {
@@ -19,7 +19,7 @@ connection.connect((err) => {
     else {
         console.error("Error connecting database...", err);
     }
-});
+}); */
 
 const config = {
     credential: firebase.credential.cert(serviceAccount),
