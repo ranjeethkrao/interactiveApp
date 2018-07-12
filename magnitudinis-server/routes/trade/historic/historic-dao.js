@@ -3,7 +3,9 @@ const express = api.getExpress();
 const router = express.Router();
 const connection = api.getDatabaseConnection();
 
-router.get('/getAllExchange', (req, res) => {
+
+
+/* router.get('/getAllExchange', (req, res) => {
     responseObject = new Object();
     connection.query('SELECT (@ROWNUM:=@ROWNUM + 1) AS `ID`, `VALUE` FROM ( SELECT DISTINCT(`EXCHANGE`) AS `VALUE` FROM `EXCHANGE`) E, ( SELECT @ROWNUM:=0 ) R ORDER BY `VALUE`', function(err, rows, fields){
         if(!err) {
@@ -43,7 +45,7 @@ router.get('/getDistinctSymbol', (req, res, next) => {
         
        return res.send(responseObject);
     });
-});
+}); */
 
 router.get('/getHistoricTradeData', (req, res) => {
     queryParams = req.query;

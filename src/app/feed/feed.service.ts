@@ -30,16 +30,16 @@ export class FeedService {
   }
 
   public fetchAllExchange() {
-    return this.http.get('/historic/getAllExchange').map(res => res.json());
+    return this.http.get('/live/getAllExchange').map(res => res.json());
   }
 
-  public fetchDistinctSymbol(exchange: string) {
+  public fetchDistinctSymbol(exchange: string[]) {
     let params = new URLSearchParams();
-    params.append('exchange', exchange);
+    params.append('exchange', exchange.toString());
 
     let options = new RequestOptions({ search: params.toString() });
 
-    return this.http.get('/historic/getDistinctSymbol', options).map(res => res.json());
+    return this.http.get('/live/getDistinctSymbol', options).map(res => res.json());
   }
 
 }

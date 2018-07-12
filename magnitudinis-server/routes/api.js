@@ -1,29 +1,31 @@
 const express = require('express');
 // const mysql = require('mysql');
 const firebase = require('firebase-admin');
-const serviceAccount = require('../firebase-auth/magnitudinis-firebase-adminsdk-sicyx-84527be3da.json');
+const serviceAccount = require('../firebase-auth/interactiveapp7-b4dba-firebase-adminsdk-bqv2d-6a1fe5b960.json');
 const router = express.Router();
 
 //Connect to mysql database
-/* const connection = mysql.createConnection({
-    host: 'localhost',
-    user: 'magnitudinis',
-    password: 'magnitudinis',
-    database: 'magnitudinis'
-});
+// const connection = mysql.createConnection({
+//     host: 'localhost',
+//     user: 'magnitudinis',
+//     password: 'magnitudinis',
+//     database: 'magnitudinis'
+// });
 
-connection.connect((err) => {
-    if (!err) {
-        console.log("Database is connected...");
-    }
-    else {
-        console.error("Error connecting database...", err);
-    }
-}); */
+// connection.connect((err) => {
+//     if (!err) {
+//         console.log("Database is connected...");
+//     }
+//     else {
+//         console.error("Error connecting database...", err);
+//     }
+// });
+
+const connection = null;
 
 const config = {
     credential: firebase.credential.cert(serviceAccount),
-    databaseURL: "https://magnitudinis.firebaseio.com"
+    databaseURL: "https://interactiveapp7-b4dba.firebaseio.com"
 };
 
 firebase.initializeApp(config);

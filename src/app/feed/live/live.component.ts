@@ -1,7 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FeedService } from '../feed.service';
 import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/forms';
-import { GridOptions, ColumnApi, GridApi } from 'ag-grid'
+import { GridOptions, ColumnApi, GridApi } from 'ag-grid';
+import { FirebaseListObservable } from 'angularfire2/database';
 
 @Component({
   selector: 'mg-live',
@@ -67,7 +68,7 @@ export class LiveComponent implements OnInit {
   ngOnInit() {
     this.hs.fetchAllExchange().subscribe((data) => {
       this.exchangeOptions = [];
-      for(let obj of data.data) {
+      for(let obj of data) {
         this.exchangeOptions.push({
           id: obj['ID'],
           itemName: obj['VALUE']
@@ -85,7 +86,7 @@ export class LiveComponent implements OnInit {
     this.hs.fetchDistinctSymbol(item['itemName']).subscribe((data) => {
       this.symbol.reset();
       this.symbolOptions = [];
-      for(let obj of data.data) {
+      for(let obj of data) {
         this.symbolOptions.push({
           id: obj['ID'],
           itemName: obj['VALUE']
@@ -95,7 +96,7 @@ export class LiveComponent implements OnInit {
   }
 
   onSymbolItemSelect(item){
-
+    // FirebaseListObservable
   }
 
 }
