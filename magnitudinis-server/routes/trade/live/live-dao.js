@@ -23,7 +23,7 @@ router.get('/getDistinctSymbol', (req, res) => {
             exchanges.forEach(exchange=>{
                 list = [...new Set(snapshot.val().filter(data=>data.Exchange === exchange))];
                 list.forEach((element, index) => {
-                    responseObject.push({ID: index, VALUE: element.Symbol})
+                    responseObject.push({ID: index, VALUE: element})
                 });
             })
             return res.send(responseObject);

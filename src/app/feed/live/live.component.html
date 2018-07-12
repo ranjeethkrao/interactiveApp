@@ -8,14 +8,28 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group label-floating">
-                                        <angular2-multiselect class="form-control" [formControl]="exchange" [data]="exchangeOptions" [(ngModel)]="exchangeSelectedItems"
-                                        [settings]="exchangeDropdownSettings" (onSelect)="onExchangeItemSelect($event)"></angular2-multiselect>
+                                        <angular2-multiselect class="form-control" 
+                                            [formControl]="exchange" 
+                                            [data]="exchangeOptions" 
+                                            [(ngModel)]="exchangeSelectionItems"
+                                            [settings]="exchangeDropdownSettings" 
+                                            (onSelect)="onExchangeItemSelect($event)"
+                                            (onDeSelect)="onExchangeItemSelect($event)"
+                                            (onSelectAll)="onExchangeItemSelect($event)" 
+                                            (onDeSelectAll)="onExchangeItemSelect($event)"></angular2-multiselect>
                                     </div>
                                 </div>
                                 <div class="col-md-6">
                                     <div class="form-group label-floating">
-                                        <angular2-multiselect class="form-control" [formControl]="symbol" [data]="symbolOptions" [(ngModel)]="symbolSelectedItems"
-                                        [settings]="symbolDropdownSettings" (onSelect)="onSymbolItemSelect($event)"></angular2-multiselect>
+                                        <angular2-multiselect class="form-control" 
+                                            [formControl]="symbol" 
+                                            [data]="symbolOptions" 
+                                            [(ngModel)]="symbolSelectedItems"
+                                            [settings]="symbolDropdownSettings" 
+                                            (onSelect)="onSymbolItemSelect($event)"
+                                            (onDeSelect)="onSymbolItemSelect($event)"
+                                            (onSelectAll)="onSymbolItemSelect($event)" 
+                                            (onDeSelectAll)="onSymbolItemSelect($event)"></angular2-multiselect>
                                     </div>
                                 </div>
                             </div>
@@ -36,13 +50,13 @@
                             class="ag-dark"
                             style="width: 100%; height:48vh;"
                             [gridOptions]="liveGridOptions"
-                            [rowData]='rowData'
+                            [rowData]="rowData"
                             enableSorting
-                            [accentedSort]='true'
+                            accentedSort="true"
                             rowSelection="single"
-                            rowHeight='22'
-                            [enableCellChangeFlash]='true'
-                            [animateRows]='true'>
+                            rowHeight="22"
+                            enableCellChangeFlash="true"
+                            animateRows="true">
                         </ag-grid-angular>
                     </div>
                 </div>

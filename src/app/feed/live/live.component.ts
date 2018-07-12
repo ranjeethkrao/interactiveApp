@@ -29,7 +29,7 @@ export class LiveComponent implements OnInit {
 
   private liveTradeFirebaseData: any;
 
-  constructor(fb: FormBuilder, private hs: FeedService) { 
+  constructor(fb: FormBuilder, private hs: FeedService) {
 
     this.form = fb.group({
       'symbol': ['', Validators.compose([Validators.required])],
@@ -39,18 +39,21 @@ export class LiveComponent implements OnInit {
     this.symbol = this.form.controls['symbol'];
     this.exchange = this.form.controls['exchange'];
 
-    this.symbolDropdownSettings = { 
-      singleSelection: false, 
-      text:"Select Symbols",
-      selectAllText:'Select All',
-      unSelectAllText:'UnSelect All',
+    this.symbolDropdownSettings = {
+      singleSelection: false,
+      text: "Select Symbols",
+      selectAllText: 'Select All',
+      unSelectAllText: 'Unselect All',
       badgeShowLimit: 3,
       enableSearchFilter: true
     };
 
-    this.exchangeDropdownSettings = { 
-      singleSelection: true, 
-      text:"Select Exchange",
+    this.exchangeDropdownSettings = {
+      singleSelection: false,
+      text: "Select Exchange",
+      selectAllText: 'Select All',
+      unSelectAllText: 'Unselect All',
+      badgeShowLimit: 3,
       enableSearchFilter: true
     };
 
@@ -68,7 +71,7 @@ export class LiveComponent implements OnInit {
   ngOnInit() {
     this.hs.fetchAllExchange().subscribe((data) => {
       this.exchangeOptions = [];
-      for(let obj of data) {
+      for (let obj of data) {
         this.exchangeOptions.push({
           id: obj['ID'],
           itemName: obj['VALUE']
@@ -76,27 +79,34 @@ export class LiveComponent implements OnInit {
       }
     });
 
-    this.hs.fetchLiveTradeData().subscribe((data) => {
-      this.liveTradeFirebaseData = [];
-      this.liveTradeFirebaseData = data.data;
-    });
+    // this.hs.fetchLiveTradeData().subscribe((data) => {
+    //   this.liveTradeFirebaseData = [];
+    //   this.liveTradeFirebaseData = data.data;
+    // });
   }
 
-  onExchangeItemSelect(item){
-    this.hs.fetchDistinctSymbol(item['itemName']).subscribe((data) => {
+  onExchangeItemSelect(item) {
+    if(this.exchangeSelectionItems.length === 0){
       this.symbol.reset();
-      this.symbolOptions = [];
-      for(let obj of data) {
-        this.symbolOptions.push({
-          id: obj['ID'],
-          itemName: obj['VALUE']
-        });
-      }
-    });
+      this.symbolOptions.length = 0;
+      this.liveGridOptions.api.setRowData([])
+    } else {
+      this.hs.fetchDistinctSymbol(this.exchangeSelectionItems.map(item=>item['itemName'])).subscribe((data) => {
+        this.symbol.reset();
+        this.symbolOptions = [];
+        for (let obj of data) {
+          this.symbolOptions.push({
+            id: obj['ID'],
+            data: obj['VALUE'],
+            itemName: obj['VALUE']['Symbol']
+          });
+        }
+      });
+    }
   }
 
-  onSymbolItemSelect(item){
-    // FirebaseListObservable
+  onSymbolItemSelect(item) {
+    this.liveGridOptions.api.setRowData(this.symbolSelectedItems.map(symbol=>symbol.data));
   }
 
 }
