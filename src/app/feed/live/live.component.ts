@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FeedService } from '../feed.service';
 import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import { GridOptions, ColumnApi, GridApi } from 'ag-grid';
@@ -9,7 +9,7 @@ import { FirebaseListObservable } from 'angularfire2/database';
   templateUrl: './live.component.html',
   styleUrls: ['./live.component.css']
 })
-export class LiveComponent implements OnInit {
+export class LiveComponent implements OnInit, OnDestroy {
 
   public form: FormGroup;
   public symbol: AbstractControl;
@@ -28,6 +28,9 @@ export class LiveComponent implements OnInit {
   private exchangeSelectionItems = [];
 
   private liveTradeFirebaseData: any;
+  private rowData = [];
+
+  private timer;
 
   constructor(fb: FormBuilder, private hs: FeedService) {
 
@@ -63,9 +66,27 @@ export class LiveComponent implements OnInit {
       { headerName: 'Symbol', field: 'Symbol' },
       { headerName: 'Trade', field: 'Trade' },
       { headerName: 'Price', field: 'Price' },
-      { headerName: 'Timestamp', field: 'Date', cellRenderer: 'animateShowChange' }
+      { headerName: 'Timestamp', field: 'Date', cellRenderer:'agAnimateShowChangeCellRenderer', comparator: dateComparator, sort: 'desc' }
     ];
     this.liveGridOptions.rowData = [];
+
+    function dateComparator(date1, date2) {
+      
+      var date1Number = new Date(date1).getTime();
+      var date2Number = new Date(date2).getTime();
+
+      if (date1Number === date2Number) {
+        return 0;
+      }
+      if (date1Number < date2Number) {
+        return -1;
+      }
+      if (date1Number > date2Number) {
+        return 1;
+      }
+      
+    }
+    
   }
 
   ngOnInit() {
@@ -78,11 +99,13 @@ export class LiveComponent implements OnInit {
         });
       }
     });
+  }
 
-    // this.hs.fetchLiveTradeData().subscribe((data) => {
-    //   this.liveTradeFirebaseData = [];
-    //   this.liveTradeFirebaseData = data.data;
-    // });
+  onGridReady(params){
+    this.liveGridApi = params.api;
+    this.liveColumnApi = params.columnApi;
+    params.api.sizeColumnsToFit();
+    this.timeoutTarget(this.liveGridApi);
   }
 
   onExchangeItemSelect(item) {
@@ -106,7 +129,42 @@ export class LiveComponent implements OnInit {
   }
 
   onSymbolItemSelect(item) {
-    this.liveGridOptions.api.setRowData(this.symbolSelectedItems.map(symbol=>symbol.data));
+    this.rowData = this.symbolSelectedItems.map(symbol=>symbol.data);
+    this.liveGridOptions.api.setRowData(this.rowData);
+  }
+
+  timeoutTarget(gridApi) {
+    this.hs.fetchLiveTradeData().subscribe((data) => {
+      let updatedItems = [];
+      Object.keys(data).forEach(key=>{
+        updatedItems.push(data[key]);
+      });
+
+      let itemsToUpdate  = [];
+      updatedItems.forEach(item=>{
+
+
+        gridApi.forEachNodeAfterFilterAndSort((node, index)=>{
+          let data = node.data;
+          if(data.Symbol === item.Symbol){
+            Object.keys(data).forEach(key=>{
+              data[key] = item[key]
+            })
+            itemsToUpdate.push(data);
+          }
+        })
+      });
+
+      gridApi.updateRowData({ update: itemsToUpdate });
+      
+    });
+    this.timer = setTimeout(this.timeoutTarget.bind(this), 1000, gridApi);
+  }
+
+
+
+  ngOnDestroy(){
+    clearTimeout(this.timer);
   }
 
 }
