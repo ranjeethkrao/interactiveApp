@@ -227,9 +227,9 @@ export class RegisterComponent implements OnInit {
 
         this.reg.fetchAllCountries().subscribe((data) => {
             this.countryOptions = [];
-            for (let obj of data.data) {
+            for (let obj of data) {
                 this.countryOptions.push({
-                    id: obj['id'],
+                    id: obj['code'],
                     itemName: obj['name']
                 });
             }
@@ -243,11 +243,7 @@ export class RegisterComponent implements OnInit {
         this.reg.getUsersFromFirebase().subscribe((data) => {
             this.userData = data;
         }, (err) => {
-            swal(
-                'Oops...',
-                err,
-                'error'
-            );
+            swal('Oops...', err, 'error');
         });
 
         firebase.auth().languageCode = 'en';
@@ -257,6 +253,22 @@ export class RegisterComponent implements OnInit {
             'size': 'normal'
         });
         this.windowRef.recaptchaVerifier.render();
+    }
+
+    verifyEmail(email){
+        console.log(email)
+        this.reg.verifyEmail(email).subscribe(data=>{
+            if (data['emailExists']){
+                console.log('Email exists')
+            } else {
+                console.log('Email not present')
+            }
+        })
+    }
+
+    verifyPhone(phone){
+        //check if phone registered - prompt to login screen
+        //else show tick mark
     }
 
     onSubmit(values: Object) {
