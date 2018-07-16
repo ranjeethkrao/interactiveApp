@@ -141,9 +141,8 @@ export class LiveComponent implements OnInit, OnDestroy {
       });
 
       let itemsToUpdate  = [];
+      let rowNodes = [];
       updatedItems.forEach(item=>{
-
-
         gridApi.forEachNodeAfterFilterAndSort((node, index)=>{
           let data = node.data;
           if(data.Symbol === item.Symbol){
@@ -151,11 +150,14 @@ export class LiveComponent implements OnInit, OnDestroy {
               data[key] = item[key]
             })
             itemsToUpdate.push(data);
+            rowNodes.push(node);
           }
         })
       });
-
+      
+      gridApi.flashCells({ rowNodes: rowNodes });
       gridApi.updateRowData({ update: itemsToUpdate });
+
       
     });
     this.timer = setTimeout(this.timeoutTarget.bind(this), 1000, gridApi);
