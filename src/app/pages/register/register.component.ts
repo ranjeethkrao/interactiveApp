@@ -67,7 +67,7 @@ export class RegisterComponent implements OnInit {
 
         this.tradersRegForm = fb.group({
             'firstname': ['', Validators.compose([CustomValidators.rangeLength([5, 30])])],
-            'lastname': ['', Validators.compose([CustomValidators.rangeLength([5, 30])])],
+            'lastname': ['', Validators.compose([CustomValidators.rangeLength([3, 30])])],
             'email': ['', Validators.compose([CustomValidators.email])],
             'phone': ['', Validators.compose([CustomValidators.phone('IN')])],
             'addressLine1': ['', Validators.compose([Validators.required])],
@@ -84,6 +84,8 @@ export class RegisterComponent implements OnInit {
             'password': ['', Validators.compose([Validators.required])],
             'confPass': ['', Validators.compose([Validators.required])]
         });
+
+        
 
         this.firstname = this.tradersRegForm.controls['firstname'];
         this.lastname = this.tradersRegForm.controls['lastname'];
@@ -137,17 +139,52 @@ export class RegisterComponent implements OnInit {
         }
     }
 
+    validateEmail(value) {
+        return this.reg.verifyEmail(value).subscribe(res => {
+            console.log(res)
+          return res;
+        });
+      }
+
     ngOnInit() {
 
         $.validator.addMethod('magnitudinisphone', function (value, element) {
             return this.optional(element) || /([0-9]{10})|(\([0-9]{3}\)\s+[0-9]{3}\-[0-9]{4})/.test(value);
         }, "Please enter a valid phone number");
+
+        $.validator.addMethod('uniqueEmail', function(value, element) {
+            var param ={
+                url: '/auth/emailExists',
+                type: 'GET',
+                dataType: "json"
+            }
+            return !$.validator.methods.remote.call(this, value, element, param );
+        }, "Email already registered! Please Login or use different email id.");
+
+        $.validator.addMethod('uniquePhone', function(value, element) {
+            var param ={
+                url: '/auth/phoneExists',
+                type: 'GET',
+                dataType: "json"
+            }
+            return !$.validator.methods.remote.call(this, value, element, param );
+        }, "Phone already registered! Please Login or use different email id.");
+
+        $.validator.addMethod('uniqueUserId', function(value, element) {
+            var param ={
+                url: '/auth/userIdExists',
+                type: 'GET',
+                dataType: "json"
+            }
+            return !$.validator.methods.remote.call(this, value, element, param );
+        }, "User Id already registered! Please Login or use different email id.");
+            
         
         const $validator = $(".wizard-card form").validate({
             rules: {
                 firstname: { required: true, minlength: 5 },
-                lastname: { required: true, minlength: 5 },
-                email: { required: true, minlength: 3, email: true },
+                lastname: { required: true, minlength: 3 },
+                email: { required: true, minlength: 3, email: true, uniqueEmail: true },
                 phone: { required: true, magnitudinisphone: true },
                 addressLine1: { required: true},
                 addressLine2: { required: true },
@@ -255,16 +292,7 @@ export class RegisterComponent implements OnInit {
         this.windowRef.recaptchaVerifier.render();
     }
 
-    verifyEmail(email){
-        console.log(email)
-        this.reg.verifyEmail(email).subscribe(data=>{
-            if (data['emailExists']){
-                console.log('Email exists')
-            } else {
-                console.log('Email not present')
-            }
-        })
-    }
+    
 
     verifyPhone(phone){
         //check if phone registered - prompt to login screen

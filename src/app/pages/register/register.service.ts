@@ -39,6 +39,14 @@ export class RegisterService {
     return this.http.get('/auth/emailExists?email=' + email).map(res => res.json());
   }
 
+  public verifyPhone(email){
+    return this.http.get('/auth/phoneExists?email=' + email).map(res => res.json());
+  }
+
+  public verifyUserId(email){
+    return this.http.get('/auth/userIdExists?email=' + email).map(res => res.json());
+  }
+
   public getTradingExperience() {
     return [
       {itemName: "0", id: 0},
