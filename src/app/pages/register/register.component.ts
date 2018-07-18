@@ -139,13 +139,6 @@ export class RegisterComponent implements OnInit {
         }
     }
 
-    validateEmail(value) {
-        return this.reg.verifyEmail(value).subscribe(res => {
-            console.log(res)
-          return res;
-        });
-      }
-
     ngOnInit() {
 
         $.validator.addMethod('magnitudinisphone', function (value, element) {
@@ -168,7 +161,7 @@ export class RegisterComponent implements OnInit {
                 dataType: "json"
             }
             return !$.validator.methods.remote.call(this, value, element, param );
-        }, "Phone already registered! Please Login or use different email id.");
+        }, "Phone number already registered! Please Login or use different number.");
 
         $.validator.addMethod('uniqueUserId', function(value, element) {
             var param ={
@@ -177,7 +170,7 @@ export class RegisterComponent implements OnInit {
                 dataType: "json"
             }
             return !$.validator.methods.remote.call(this, value, element, param );
-        }, "User Id already registered! Please Login or use different email id.");
+        }, "User Id already taken! Please Login or choose a different user id.");
             
         
         const $validator = $(".wizard-card form").validate({
@@ -185,14 +178,14 @@ export class RegisterComponent implements OnInit {
                 firstname: { required: true, minlength: 5 },
                 lastname: { required: true, minlength: 3 },
                 email: { required: true, minlength: 3, email: true, uniqueEmail: true },
-                phone: { required: true, magnitudinisphone: true },
+                phone: { required: true, magnitudinisphone: true, uniquePhone: true },
                 addressLine1: { required: true},
                 addressLine2: { required: true },
                 country: { required: true },
                 state: { required: true },
                 city: { required: true },
                 pincode: { required: true, digits: true },
-                username: { required: true },
+                username: { required: true, uniqueUserId: true },
                 password: { minlength: 8 },
                 confPass: { minlength: 8, equalTo: '#password'}
             }
@@ -277,11 +270,11 @@ export class RegisterComponent implements OnInit {
         this.brokeAccOptions = this.reg.getBrokerageAccOption();
         this.interestOptions = this.reg.getInterest();
 
-        this.reg.getUsersFromFirebase().subscribe((data) => {
+        /* this.reg.getUsersFromFirebase().subscribe((data) => {
             this.userData = data;
         }, (err) => {
             swal('Oops...', err, 'error');
-        });
+        }); */
 
         firebase.auth().languageCode = 'en';
 
@@ -292,14 +285,9 @@ export class RegisterComponent implements OnInit {
         this.windowRef.recaptchaVerifier.render();
     }
 
-    
-
-    verifyPhone(phone){
-        //check if phone registered - prompt to login screen
-        //else show tick mark
-    }
-
     onSubmit(values: Object) {
+        const $valid = $('.wizard-card form').valid();
+        console.log($valid)
         const appVerifier = this.windowRef.recaptchaVerifier;
         values['phone'] = $('[name="phone"]').intlTelInput('getNumber');
         firebase.auth().signInWithPhoneNumber(values['phone'], appVerifier)

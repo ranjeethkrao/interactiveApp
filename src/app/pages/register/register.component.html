@@ -82,7 +82,7 @@
                                                         <label class="control-label">Email
                                                             <small>(required)</small>
                                                         </label>
-                                                        <input type="email" class="form-control" formControlName="email" name="email" (blur)="verifyEmail(email.value)" #email>
+                                                        <input type="email" class="form-control" formControlName="email" name="email">
                                                     </div>
                                                     <div class="form-group label-floating has-errors">
                                                         <input type="tel" class="form-control" formControlName="phone" name="phone">
@@ -220,7 +220,7 @@
                             <div class="tab-pane" id="verify">
                                 <div class="row">
                                     <div class="col-sm-12">
-                                        <h4 class="info-text"> Enter the Verification Code we sent you on your mobile phone </h4>
+                                        <h4 class="info-text"> Enter the Verification Code we sent you on your mobile phone. </h4>
                                     </div>
                                     <div class="col-sm-12" >
                                         <div class="form-group label-floating has-errors">

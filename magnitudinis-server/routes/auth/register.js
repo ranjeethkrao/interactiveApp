@@ -328,7 +328,7 @@ router.get('/userIdExists', (req, res) => {
             firebaseDB.ref('users').once("value", function (snapshot) {
                 var exists = false;
                 Object.keys(snapshot.val()).forEach(key => {
-                    if (snapshot.val()[key].userId === req.query.userId) {
+                    if (snapshot.val()[key].userId === req.query.username) {
                         exists = true;
                     }
                 })
