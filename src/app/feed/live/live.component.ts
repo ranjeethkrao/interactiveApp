@@ -105,7 +105,6 @@ export class LiveComponent implements OnInit, OnDestroy {
     this.liveGridApi = params.api;
     this.liveColumnApi = params.columnApi;
     params.api.sizeColumnsToFit();
-    this.timeoutTarget(this.liveGridApi);
   }
 
   onExchangeItemSelect(item) {
@@ -113,6 +112,7 @@ export class LiveComponent implements OnInit, OnDestroy {
       this.symbol.reset();
       this.symbolOptions.length = 0;
       this.liveGridOptions.api.setRowData([])
+      clearTimeout(this.timer);
     } else {
       this.hs.fetchDistinctSymbol(this.exchangeSelectionItems.map(item=>item['itemName'])).subscribe((data) => {
         this.symbol.reset();
@@ -131,6 +131,10 @@ export class LiveComponent implements OnInit, OnDestroy {
   onSymbolItemSelect(item) {
     this.rowData = this.symbolSelectedItems.map(symbol=>symbol.data);
     this.liveGridOptions.api.setRowData(this.rowData);
+    clearTimeout(this.timer);
+    if(this.symbolSelectedItems.length > 0){     
+      this.timeoutTarget(this.liveGridApi);
+    }
   }
 
   timeoutTarget(gridApi) {
@@ -162,8 +166,6 @@ export class LiveComponent implements OnInit, OnDestroy {
     });
     this.timer = setTimeout(this.timeoutTarget.bind(this), 1000, gridApi);
   }
-
-
 
   ngOnDestroy(){
     clearTimeout(this.timer);
