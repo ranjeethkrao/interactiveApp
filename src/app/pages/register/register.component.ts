@@ -1,4 +1,4 @@
-import { Component, OnInit, SimpleChanges, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, SimpleChanges, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 
@@ -17,7 +17,7 @@ declare const $: any;
     templateUrl: './register.component.html'
 })
 
-export class RegisterComponent implements OnInit {
+export class RegisterComponent implements OnInit, AfterViewInit {
     test: Date = new Date();
 
     public tradersRegForm: FormGroup;
@@ -63,6 +63,8 @@ export class RegisterComponent implements OnInit {
     private interestSettings = {};
     private interestSelectedItems = [];
 
+    private registrationComplete: boolean = false;
+
     constructor(private reg: RegisterService, fb: FormBuilder, private router: Router) {
 
         this.tradersRegForm = fb.group({
@@ -85,7 +87,7 @@ export class RegisterComponent implements OnInit {
             'confPass': ['', Validators.compose([Validators.required])]
         });
 
-        
+
 
         this.firstname = this.tradersRegForm.controls['firstname'];
         this.lastname = this.tradersRegForm.controls['lastname'];
@@ -139,47 +141,63 @@ export class RegisterComponent implements OnInit {
         }
     }
 
-    ngOnInit() {
+    ngOnInit(){
+        this.reg.fetchAllCountries().subscribe((data) => {
+            this.countryOptions = [];
+            for (let obj of data) {
+                this.countryOptions.push({
+                    id: obj['code'],
+                    itemName: obj['name']
+                });
+            }
+        });
+
+        this.tradingExpOptions = this.reg.getTradingExperience();
+        this.tradingFeqOptions = this.reg.getTradeTimes();
+        this.brokeAccOptions = this.reg.getBrokerageAccOption();
+        this.interestOptions = this.reg.getInterest();
+    }
+
+    ngAfterViewInit() {
 
         $.validator.addMethod('magnitudinisphone', function (value, element) {
             return this.optional(element) || /([0-9]{10})|(\([0-9]{3}\)\s+[0-9]{3}\-[0-9]{4})/.test(value);
         }, "Please enter a valid phone number");
 
-        $.validator.addMethod('uniqueEmail', function(value, element) {
-            var param ={
+        $.validator.addMethod('uniqueEmail', function (value, element) {
+            var param = {
                 url: '/auth/emailExists',
                 type: 'GET',
                 dataType: "json"
             }
-            return !$.validator.methods.remote.call(this, value, element, param );
+            return !$.validator.methods.remote.call(this, value, element, param);
         }, "Email already registered! Please Login or use different email id.");
 
-        $.validator.addMethod('uniquePhone', function(value, element) {
-            var param ={
+        $.validator.addMethod('uniquePhone', function (value, element) {
+            var param = {
                 url: '/auth/phoneExists',
                 type: 'GET',
                 dataType: "json"
             }
-            return !$.validator.methods.remote.call(this, value, element, param );
+            return !$.validator.methods.remote.call(this, value, element, param);
         }, "Phone number already registered! Please Login or use different number.");
 
-        $.validator.addMethod('uniqueUserId', function(value, element) {
-            var param ={
+        $.validator.addMethod('uniqueUserId', function (value, element) {
+            var param = {
                 url: '/auth/userIdExists',
                 type: 'GET',
                 dataType: "json"
             }
-            return !$.validator.methods.remote.call(this, value, element, param );
+            return !$.validator.methods.remote.call(this, value, element, param);
         }, "User Id already taken! Please Login or choose a different user id.");
-            
-        
+
         const $validator = $(".wizard-card form").validate({
             rules: {
                 firstname: { required: true, minlength: 5 },
                 lastname: { required: true, minlength: 3 },
                 email: { required: true, minlength: 3, email: true, uniqueEmail: true },
                 phone: { required: true, magnitudinisphone: true, uniquePhone: true },
-                addressLine1: { required: true},
+                addressLine1: { required: true },
                 addressLine2: { required: true },
                 country: { required: true },
                 state: { required: true },
@@ -187,9 +205,9 @@ export class RegisterComponent implements OnInit {
                 pincode: { required: true, digits: true },
                 username: { required: true, uniqueUserId: true },
                 password: { minlength: 8 },
-                confPass: { minlength: 8, equalTo: '#password'}
+                confPass: { minlength: 8, equalTo: '#password' }
             }
-          });
+        });
 
         $('.wizard-card').bootstrapWizard({
             'tabClass': 'nav nav-pills',
@@ -229,7 +247,7 @@ export class RegisterComponent implements OnInit {
 
                 if (!$valid) {
                     return false;
-                } 
+                }
                 else {
                     return true;
                 }
@@ -255,27 +273,6 @@ export class RegisterComponent implements OnInit {
             }
         });
 
-        this.reg.fetchAllCountries().subscribe((data) => {
-            this.countryOptions = [];
-            for (let obj of data) {
-                this.countryOptions.push({
-                    id: obj['code'],
-                    itemName: obj['name']
-                });
-            }
-        });
-
-        this.tradingExpOptions = this.reg.getTradingExperience();
-        this.tradingFeqOptions = this.reg.getTradeTimes();
-        this.brokeAccOptions = this.reg.getBrokerageAccOption();
-        this.interestOptions = this.reg.getInterest();
-
-        /* this.reg.getUsersFromFirebase().subscribe((data) => {
-            this.userData = data;
-        }, (err) => {
-            swal('Oops...', err, 'error');
-        }); */
-
         firebase.auth().languageCode = 'en';
 
         this.windowRef = this.reg.windowRef;
@@ -287,63 +284,94 @@ export class RegisterComponent implements OnInit {
 
     onSubmit(values: Object) {
         const $valid = $('.wizard-card form').valid();
-        console.log($valid)
-        const appVerifier = this.windowRef.recaptchaVerifier;
-        values['phone'] = $('[name="phone"]').intlTelInput('getNumber');
-        firebase.auth().signInWithPhoneNumber(values['phone'], appVerifier)
-        .then((result) => {
-            this.windowRef.confirmationResult = result;
-            if(this.windowRef.confirmationResult) {
-                swal({
-                    title: 'Enter your Verification Code Here',
-                    input: 'password',
-                    showCancelButton: false,
-                    confirmButtonText: 'Verify',
-                    showLoaderOnConfirm: true,
-                    preConfirm: (code) => {
-                      return new Promise((resolve, reject) => {
-                        this.windowRef.confirmationResult.confirm(code)
-                        .then((result) => {
-                            resolve(result);
-                        })
-                        .catch((error) => {
-                            reject(error);
-                        })
-                      });
-                    },
-                    allowOutsideClick: false
-                  })
-                  .then((result) => {
-                    swal({
-                        type: 'success',
-                        title: 'You have successfully registered with your phone number !'
-                    });
-                    values['uuid'] = result.user.uid;
-                    this.reg.saveUser(values).subscribe((data) => {
-                        this.router.navigate(['/login']);
-                    },(err) => {
-                        swal(
-                            'Oops...',
-                            err.message,
-                            'error'
-                        );
-                    });
-                  })
-                  .catch((error) => {
+        if ($valid) {
+            const appVerifier = this.windowRef.recaptchaVerifier;
+            values['phone'] = $('[name="phone"]').intlTelInput('getNumber');
+            firebase.auth().signInWithPhoneNumber(values['phone'], appVerifier)
+                .then((result) => {
+                    this.windowRef.confirmationResult = result;
+                    if (this.windowRef.confirmationResult) {
+                        this.registrationComplete = true;
+                        // swal({
+                        //     title: 'Enter your Verification Code Here',
+                        //     input: 'password',
+                        //     showCancelButton: false,
+                        //     confirmButtonText: 'Verify',
+                        //     showLoaderOnConfirm: true,
+                        //     preConfirm: (code) => {
+                        //     return new Promise((resolve, reject) => {
+                        //         this.windowRef.confirmationResult.confirm(code)
+                        //         .then((result) => {
+                        //             resolve(result);
+                        //         })
+                        //         .catch((error) => {
+                        //             reject(error);
+                        //         })
+                        //     });
+                        //     },
+                        //     allowOutsideClick: false
+                        // })
+                        // .then((result) => {
+                        //     swal({
+                        //         type: 'success',
+                        //         title: 'You have successfully registered with your phone number !'
+                        //     });
+                        //     values['uuid'] = result.user.uid;
+                        //     this.reg.saveUser(values).subscribe((data) => {
+                        //         this.router.navigate(['/login']);
+                        //     },(err) => {
+                        //         swal(
+                        //             'Oops...',
+                        //             err.message,
+                        //             'error'
+                        //         );
+                        //     });
+                        // })
+                        // .catch((error) => {
+                        //     swal(
+                        //         'Oops...',
+                        //         error.message,
+                        //         'error'
+                        //     )
+                        // })
+                    }
+                })
+                .catch((error) => {
                     swal(
                         'Oops...',
                         error.message,
                         'error'
                     )
-                  })
-            }
-        })
-        .catch((error) => {
-            swal(
-                'Oops...',
-                error.message,
-                'error'
-            )
-        });
+                });
+        } else {
+            swal('Error', 'Please check the Registration form for errors', 'error');
+        }
+    }
+
+    verifyLoginCode(code) {
+        let values = this.tradersRegForm.value;
+        this.windowRef.confirmationResult.confirm(code)
+            .then((result) => {
+                swal({
+                    type: 'success',
+                    title: 'You have successfully registered with your phone number !'
+                });
+                values['uuid'] = result.user.uid;
+                this.reg.saveUser(values).subscribe((data) => {
+                    this.router.navigate(['/login']);
+                }, (err) => {
+                    swal(
+                        'Oops...',
+                        err.message,
+                        'error'
+                    );
+                });
+            })
+            .catch((error) => {
+            })
+    }
+
+    gotoLogin(){
+        this.router.navigate(['/login']);
     }
 }
