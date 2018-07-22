@@ -31,7 +31,7 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-sm-10 col-sm-offset-1">
-                        <div class="wizard-container" >
+                        <div class="wizard-container">
                             <div *ngIf="!registrationComplete">
                                 <div class="card wizard-card" data-color="rose" id="wizardProfile">
                                     <form [formGroup]="tradersRegForm" (ngSubmit)="onSubmit(tradersRegForm.value)">
@@ -69,7 +69,7 @@
                                                             <label class="control-label">First Name
                                                                 <small>(required)</small>
                                                             </label>
-                                                            <input type="text" class="form-control" formControlName="firstname" name= "firstname">
+                                                            <input type="text" class="form-control" formControlName="firstname" name="firstname">
                                                         </div>
                                                         <div class="form-group label-floating has-errors">
                                                             <label class="control-label">Last Name
@@ -99,7 +99,7 @@
                                                     <div class="col-sm-6">
                                                         <div class="form-group label-floating has-errors">
                                                             <label class="control-label">Address Line 1</label>
-                                                            <input type="text" class="form-control" formControlName="addressLine1" name="addressLine1"> 
+                                                            <input type="text" class="form-control" formControlName="addressLine1" name="addressLine1">
                                                         </div>
                                                         <div class="form-group label-floating has-errors">
                                                             <label class="control-label">Address Line 2</label>
@@ -108,7 +108,7 @@
 
                                                         <div class="form-group label-floating has-errors">
                                                             <angular2-multiselect name="country" class="form-control" formControlName="country" [data]="countryOptions" [(ngModel)]="countrySelectedItem"
-                                                                [settings]="countrySettings"></angular2-multiselect>                                                          
+                                                                [settings]="countrySettings"></angular2-multiselect>
                                                         </div>
                                                     </div>
                                                     <div class="col-sm-6">
@@ -183,7 +183,7 @@
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div class="tab-pane" id="verify">
+                                            <!-- <div class="tab-pane" id="verify">
                                                 <div class="row">
                                                     <div class="col-sm-12">
                                                         <h4 class="info-text"> Enter the Verification Code we sent you on your mobile phone </h4>
@@ -194,15 +194,15 @@
                                                             <input type="number" class="form-control" name="verificationCode" id="verificationCode">
                                                             <button (click)="verifyLoginCode()">Verify</button>
                                                         </div>
-                                                        <!-- <div *ngIf="windowRef.confirmationResult">
+                                                        <div *ngIf="windowRef.confirmationResult">
                                                             <hr>
                                                             <label for="code">Enter your Verification Code Here</label><br>
                                                             <input type="text" name="code" [(ngModel)]="verificationCode">
                                                             <button (click)="verifyLoginCode()">Verify</button>
-                                                        </div> -->
+                                                        </div>
                                                     </div>
                                                 </div>
-                                            </div>
+                                            </div> -->
                                         </div>
                                         <div class="wizard-footer">
                                             <div class="pull-right">
@@ -220,7 +220,7 @@
 
 
 
-                            <div *ngIf="registrationComplete">
+                            <div *ngIf="registrationComplete && !phoneVerified">
                                 <div class="card wizard-card" data-color="rose" id="wizardProfile2">
                                     <div class="wizard-header">
                                         <h3 class="wizard-title">
@@ -229,26 +229,50 @@
                                         <h5>Please enter the Verification Code in the SMS</h5>
                                     </div>
                                     <div class="tab-pane" id="verify">
-                                        <div class="col-md-4" ></div>
+                                        <div class="col-md-4"></div>
                                         <div class="col-md-4">
                                             <div class="form-group label-floating has-errors">
                                                 <label class="control-label">Verification Code</label>
                                                 <input type="number" class="form-control" name="verificationCode" id="verificationCode" #vc>
-                                                <div style="text-align: center"><input type='button' class='btn btn-fill btn-rose btn-wd' name='verify' value='Verify' (click)="verifyLoginCode(vc.value)"/></div>
+                                                <div style="text-align: center">
+                                                    <input type='button' class='btn btn-fill btn-rose btn-wd' name='verify' value='Verify'
+                                                        (click)="verifyLoginCode(vc.value)" />
+                                                </div>
                                                 <!-- <button (click)="verifyLoginCode(vc.value)">Verify</button> -->
                                             </div>
                                         </div>
-                                        <div class="col-md-4" ></div>
+                                        <div class="col-md-4"></div>
                                     </div>
                                     <div class="clearfix"></div>
                                     <div class="wizard-header">
-                                        <h5>Also please verify your email by clicking on the link we sent you. This is necessary before Login.</h5>
-                                        <div style="text-align: center"><input type='button' class='btn btn-fill btn-rose btn-wd' name='gotoLogin' value='Proceed to Login' (click)="gotoLogin()"/></div>
+                                        <h5>Also please verify your email by clicking on the link we sent you. This is necessary
+                                            before Login.</h5>
+                                        <div style="text-align: center">
+                                            <input type='button' class='btn btn-fill btn-rose btn-wd' name='gotoLogin' value='Proceed to Login'
+                                                (click)="gotoLogin()" />
+                                        </div>
                                     </div>
                                 </div>
                             </div>
 
-
+                            <div *ngIf="registrationComplete && phoneVerified">
+                                <div class="card wizard-card" data-color="rose" id="wizardProfile2">
+                                    <div class="wizard-header">
+                                        <h3 class="wizard-title">
+                                            Phone number has been verified!
+                                        </h3>
+                                    </div>
+                                    <div class="clearfix"></div>
+                                    <div class="wizard-header">
+                                        <h5>Also please verify your email by clicking on the link we sent you. This is necessary
+                                            before Login.</h5>
+                                        <div style="text-align: center">
+                                            <input type='button' class='btn btn-fill btn-rose btn-wd' name='gotoLogin' value='Proceed to Login'
+                                                (click)="gotoLogin()" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
 
                         </div>
                     </div>

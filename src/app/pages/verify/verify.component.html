@@ -36,25 +36,24 @@
 
                                 <!-- Phone Verified -->
                                 <div *ngIf="phoneVerified" class="wizard-header" >
-                                    <h5 class="wizard-title">                                        
+                                    <h3 class="wizard-title">                                        
                                         You have verified your phone number!
                                         <span><i class="material-icons" style="color: #34b7f1">done_all</i></span>
-                                    </h5>
+                                    </h3>
                                 </div>
 
                                 <!-- Phone not verified -->
                                 <div *ngIf="!phoneVerified">
                                     <div *ngIf="!smsSent">
                                         <div class="wizard-header">
-                                            <h3 class="wizard-title">You have to verify your phone number to complete the registration process.</h3>
-                                            <h3 class="wizard-title">Click here if you want to Resend OTP.</h3>
+                                            <h3 class="wizard-title">You have to verify your phone number to complete the registration process!</h3>
+                                            <h3 class="wizard-title">Click here to send OTP.</h3>
                                             <div id="recaptcha-container"></div>
-                                            <input type='button' class='btn btn-fill btn-rose btn-wd' name='verify' value='Resend OTP' (click)="resendOtp()" />
+                                            <input type='submit' class='btn btn-fill btn-rose btn-wd' name='sendOtp' value='Send OTP' (click)="resendOtp()" />
                                         </div>
 
                                     </div>
-                                    <div *ngIf="smsSent">
-                                        
+                                    <div *ngIf="smsSent" class="row">
                                         <div class="wizard-header">
                                             <h3 class="wizard-title">
                                                 We just sent you a message!
@@ -68,8 +67,8 @@
                                                     <label class="control-label">Verification Code</label>
                                                     <input type="number" class="form-control" name="verificationCode" id="verificationCode" #vc>
                                                     <div style="text-align: center">
-                                                        <input type='button' class='btn btn-fill btn-rose btn-wd' name='verify' value='Verify' (click)="verifyLoginCode(vc.value)"
-                                                        />
+                                                        <input type='button' class='btn btn-fill btn-rose btn-wd' name='verify' value='Verify' (click)="verifyOtp(vc.value)"/>
+                                                        <input type="button" class="btn btn-fill btn-rose btn-wd" name='resendOtp' value="Resend OTP" (click)="smsSent=false" />
                                                     </div>
                                                 </div>
                                             </div>

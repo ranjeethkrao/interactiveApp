@@ -64,6 +64,7 @@ export class RegisterComponent implements OnInit, AfterViewInit {
     private interestSelectedItems = [];
 
     private registrationComplete: boolean = false;
+    private phoneVerified: boolean = false;
 
     constructor(private reg: RegisterService, fb: FormBuilder, private router: Router) {
 
@@ -147,7 +148,7 @@ export class RegisterComponent implements OnInit, AfterViewInit {
             for (let obj of data) {
                 this.countryOptions.push({
                     id: obj['code'],
-                    itemName: obj['name']
+                    itemName: obj['itemName']
                 });
             }
         });
@@ -213,9 +214,9 @@ export class RegisterComponent implements OnInit, AfterViewInit {
                 password: { minlength: 8 },
                 confPass: { minlength: 8, equalTo: '#password' }
             }, messages: {
-                email: {remote: "Email already registered! Please Login or use different email id."},
-                phone: {remote: "Phone number already registered! Please Login or use different number."},
-                username: {remote: "Username already taken! Please Login or choose a different username."}
+                email: { remote: "Email already registered! Please Login or use different email id." },
+                phone: { remote: "Phone number already registered! Please Login or use different number." },
+                username: { remote: "Username already taken! Please Login or choose a different username." }
             }
         });
 
@@ -295,89 +296,64 @@ export class RegisterComponent implements OnInit, AfterViewInit {
     onSubmit(values: Object) {
         const $valid = $('.wizard-card form').valid();
         if ($valid) {
-            const appVerifier = this.windowRef.recaptchaVerifier;
-            values['phone'] = $('[name="phone"]').intlTelInput('getNumber');
-            firebase.auth().signInWithPhoneNumber(values['phone'], appVerifier)
-                .then((result) => {
-                    this.windowRef.confirmationResult = result;
-                    if (this.windowRef.confirmationResult) {
-                        this.registrationComplete = true;
-                        // swal({
-                        //     title: 'Enter your Verification Code Here',
-                        //     input: 'password',
-                        //     showCancelButton: false,
-                        //     confirmButtonText: 'Verify',
-                        //     showLoaderOnConfirm: true,
-                        //     preConfirm: (code) => {
-                        //     return new Promise((resolve, reject) => {
-                        //         this.windowRef.confirmationResult.confirm(code)
-                        //         .then((result) => {
-                        //             resolve(result);
-                        //         })
-                        //         .catch((error) => {
-                        //             reject(error);
-                        //         })
-                        //     });
-                        //     },
-                        //     allowOutsideClick: false
-                        // })
-                        // .then((result) => {
-                        //     swal({
-                        //         type: 'success',
-                        //         title: 'You have successfully registered with your phone number !'
-                        //     });
-                        //     values['uuid'] = result.user.uid;
-                        //     this.reg.saveUser(values).subscribe((data) => {
-                        //         this.router.navigate(['/login']);
-                        //     },(err) => {
-                        //         swal(
-                        //             'Oops...',
-                        //             err.message,
-                        //             'error'
-                        //         );
-                        //     });
-                        // })
-                        // .catch((error) => {
-                        //     swal(
-                        //         'Oops...',
-                        //         error.message,
-                        //         'error'
-                        //     )
-                        // })
-                    }
-                })
-                .catch((error) => {
-                    swal(
-                        'Oops...',
-                        error.message,
-                        'error'
-                    )
-                });
+
+            //Save User
+            this.reg.saveUser(values).subscribe((data) => {
+
+                //Send SMS
+                this.sendSMS($('[name="phone"]').intlTelInput('getNumber'))
+
+                //Send Email
+                // this.sendEmail();
+
+            }, (err) => {
+                swal('Oops...', 'Error Saving User', 'error');
+            });
+
         } else {
             swal('Error', 'Please check the Registration form for errors', 'error');
         }
     }
 
+    sendEmail() {
+
+    }
+
+
+    sendSMS(phone) {
+        const appVerifier = this.windowRef.recaptchaVerifier;
+        firebase.auth().signInWithPhoneNumber(phone, appVerifier)
+            .then((result) => {
+                this.windowRef.confirmationResult = result;
+                if (this.windowRef.confirmationResult) {
+                    this.registrationComplete = true;
+                }
+            })
+            .catch((error) => {
+                swal(
+                    'Oops...',
+                    error.message,
+                    'error'
+                )
+            });
+    }
+
     verifyLoginCode(code) {
-        let values = this.tradersRegForm.value;
+        let self = this;
         this.windowRef.confirmationResult.confirm(code)
             .then((result) => {
                 swal({
                     type: 'success',
                     title: 'You have successfully registered with your phone number !'
                 });
-                values['uuid'] = result.user.uid;
-                this.reg.saveUser(values).subscribe((data) => {
-                    this.router.navigate(['/login']);
-                }, (err) => {
-                    swal(
-                        'Oops...',
-                        err.message,
-                        'error'
-                    );
-                });
+                self.phoneVerified = true;
+                this.reg.phoneVerified().subscribe(data=>{});
             })
             .catch((error) => {
+                swal({
+                    type: 'error',
+                    title: 'Could not register with the provided phone number !'
+                });
             })
     }
 

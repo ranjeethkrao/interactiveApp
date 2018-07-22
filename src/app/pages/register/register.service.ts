@@ -8,7 +8,7 @@ import 'rxjs/add/operator/map';
 @Injectable()
 export class RegisterService {
 
-  user: string = '';
+  user: string = 'ranjitp';
 
   constructor(private http: Http) { }
 
@@ -51,6 +51,14 @@ export class RegisterService {
 
   public verifyUserId(email){
     return this.http.get('/auth/userIdExists?email=' + email).map(res => res.json());
+  }
+
+  public phoneVerified(){
+    return this.http.get('/auth/phoneVerified/' + this.user).map(res => res.json());
+  }
+
+  public emailVerified(){
+    return this.http.get('/auth/emailVerified/' + this.user).map(res => res.json());
   }
 
   public getTradingExperience() {
