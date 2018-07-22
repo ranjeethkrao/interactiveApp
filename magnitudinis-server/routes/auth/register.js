@@ -286,16 +286,16 @@ router.get('/fetchAllUsers', (req, res) => {
     return res.send(firebaseDB.ref().child('/USERS/').once('value'));
 });
 
-router.get('/emailExists', (req, res) => {
+router.post('/isEmailUnique', (req, res) => {
     async.waterfall([
         function (callback) {
             firebaseDB.ref('users').once("value", function (snapshot) {
-                var val = false;
+                var val = true;
                 Object.keys(snapshot.val()).forEach(key => {
-                    if (snapshot.val()[key].email === req.query.email) {
-                        val = true;
+                    if (snapshot.val()[key].email === req.body.email) {
+                        val = false;
                     }
-                })
+                })                                
                 callback(val);
             });
         }
@@ -304,14 +304,14 @@ router.get('/emailExists', (req, res) => {
     });
 });
 
-router.get('/phoneExists', (req, res) => {
+router.post('/isPhoneUnique', (req, res) => {
     async.waterfall([
         function (callback) {
             firebaseDB.ref('users').once("value", function (snapshot) {
-                var exists = false;
+                var exists = true;
                 Object.keys(snapshot.val()).forEach(key => {
-                    if (snapshot.val()[key].phone === req.query.phone) {
-                        exists = true;
+                    if (snapshot.val()[key].phone === req.body.phone) {
+                        exists = false;
                     }
                 })
                 callback(exists);
@@ -322,14 +322,14 @@ router.get('/phoneExists', (req, res) => {
     });
 });
 
-router.get('/userIdExists', (req, res) => {
+router.post('/isUsernameUnique', (req, res) => {
     async.waterfall([
         function (callback) {
             firebaseDB.ref('users').once("value", function (snapshot) {
-                var exists = false;
+                var exists = true;
                 Object.keys(snapshot.val()).forEach(key => {
-                    if (snapshot.val()[key].userId === req.query.username) {
-                        exists = true;
+                    if (snapshot.val()[key].userId === req.body.username) {
+                        exists = false;
                     }
                 })
                 callback(exists);

@@ -141,7 +141,7 @@ export class RegisterComponent implements OnInit, AfterViewInit {
         }
     }
 
-    ngOnInit(){
+    ngOnInit() {
         this.reg.fetchAllCountries().subscribe((data) => {
             this.countryOptions = [];
             for (let obj of data) {
@@ -164,48 +164,58 @@ export class RegisterComponent implements OnInit, AfterViewInit {
             return this.optional(element) || /([0-9]{10})|(\([0-9]{3}\)\s+[0-9]{3}\-[0-9]{4})/.test(value);
         }, "Please enter a valid phone number");
 
-        $.validator.addMethod('uniqueEmail', function (value, element) {
-            var param = {
-                url: '/auth/emailExists',
-                type: 'GET',
-                dataType: "json"
-            }
-            return !$.validator.methods.remote.call(this, value, element, param);
-        }, "Email already registered! Please Login or use different email id.");
-
-        $.validator.addMethod('uniquePhone', function (value, element) {
-            var param = {
-                url: '/auth/phoneExists',
-                type: 'GET',
-                dataType: "json"
-            }
-            return !$.validator.methods.remote.call(this, value, element, param);
-        }, "Phone number already registered! Please Login or use different number.");
-
-        $.validator.addMethod('uniqueUserId', function (value, element) {
-            var param = {
-                url: '/auth/userIdExists',
-                type: 'GET',
-                dataType: "json"
-            }
-            return !$.validator.methods.remote.call(this, value, element, param);
-        }, "User Id already taken! Please Login or choose a different user id.");
-
         const $validator = $(".wizard-card form").validate({
             rules: {
                 firstname: { required: true, minlength: 5 },
                 lastname: { required: true, minlength: 3 },
-                email: { required: true, minlength: 3, email: true, uniqueEmail: true },
-                phone: { required: true, magnitudinisphone: true, uniquePhone: true },
+                email: {
+                    required: true, minlength: 3, email: true, remote: {
+                        url: "/auth/isEmailUnique",
+                        type: "post",
+                        data: {
+                            email: function () {
+                                return $("#email").val();
+                            }
+                        },
+                        dataType: 'json'
+                    }
+                },
+                phone: {
+                    required: true, magnitudinisphone: true, remote: {
+                        url: "/auth/isPhoneUnique",
+                        type: "post",
+                        data: {
+                            phone: function () {
+                                return $("#phone").val();
+                            }
+                        },
+                        dataType: 'json'
+                    }
+                },
                 addressLine1: { required: true },
                 addressLine2: { required: true },
                 country: { required: true },
                 state: { required: true },
                 city: { required: true },
                 pincode: { required: true, digits: true },
-                username: { required: true, uniqueUserId: true },
+                username: {
+                    required: true, remote: {
+                        url: "/auth/isUsernameUnique",
+                        type: "post",
+                        data: {
+                            username: function () {
+                                return $("#username").val();
+                            }
+                        },
+                        dataType: 'json'
+                    }
+                },
                 password: { minlength: 8 },
                 confPass: { minlength: 8, equalTo: '#password' }
+            }, messages: {
+                email: {remote: "Email already registered! Please Login or use different email id."},
+                phone: {remote: "Phone number already registered! Please Login or use different number."},
+                username: {remote: "Username already taken! Please Login or choose a different username."}
             }
         });
 
@@ -371,7 +381,7 @@ export class RegisterComponent implements OnInit, AfterViewInit {
             })
     }
 
-    gotoLogin(){
+    gotoLogin() {
         this.router.navigate(['/login']);
     }
 }
