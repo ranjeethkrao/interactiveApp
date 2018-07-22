@@ -8,6 +8,8 @@ import 'rxjs/add/operator/map';
 @Injectable()
 export class RegisterService {
 
+  user: string = '';
+
   constructor(private http: Http) { }
 
   get windowRef() {
@@ -29,6 +31,10 @@ export class RegisterService {
   public saveUser(values: Object) {
     delete values['confPass'];
     return this.http.post('/auth/register', values).map(res => res.json());
+  }
+
+  public getUserFromFirebase(username) {
+    return this.http.get('/auth/fetchUser/' + username).map(res => res.json());
   }
 
   public getUsersFromFirebase() {
@@ -80,6 +86,14 @@ export class RegisterService {
       { itemName: 'Forex', id: 3 },
       { itemName: 'Exchange-traded funds(ETFs)', id: 4 }
     ];
+  }
+
+  public setCurrentUser(username){
+    this.user = username;
+  }
+
+  public getCurrentUser(){
+    return this.user;
   }
 
 }

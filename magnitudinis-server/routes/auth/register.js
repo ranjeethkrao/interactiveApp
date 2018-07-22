@@ -286,6 +286,24 @@ router.get('/fetchAllUsers', (req, res) => {
     return res.send(firebaseDB.ref().child('/USERS/').once('value'));
 });
 
+router.get('/fetchUser/:username', (req, res) => {
+    async.waterfall([
+        function (callback) {
+            firebaseDB.ref('users').once("value", function (snapshot) {
+                var user = {};
+                Object.keys(snapshot.val()).forEach(key => {
+                    if (snapshot.val()[key].userId === req.params.username) {
+                        user = snapshot.val()[key];
+                    }
+                })                                
+                callback(user);
+            });
+        }
+    ], function (result, err) {
+        res.send(result)
+    });
+});
+
 router.post('/isEmailUnique', (req, res) => {
     async.waterfall([
         function (callback) {

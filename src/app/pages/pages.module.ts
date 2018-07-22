@@ -13,6 +13,9 @@ import { PagesRoutes } from './pages.routing';
 import { RegisterComponent } from './register/register.component';
 import { RegisterService } from './register/register.service';
 import { LoginComponent } from './login/login.component';
+import { VerifyComponent } from './verify/verify.component';
+import { VerifyService } from './verify/verify.service';
+
 
 @NgModule({
   imports: [
@@ -26,10 +29,12 @@ import { LoginComponent } from './login/login.component';
   ],
   declarations: [
     LoginComponent,
-    RegisterComponent
+    RegisterComponent,
+    VerifyComponent
   ],
   providers: [
-    RegisterService
+    RegisterService,
+    VerifyService
   ]
 })
 
