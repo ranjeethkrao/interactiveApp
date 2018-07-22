@@ -379,21 +379,16 @@ router.post('/register', (req, res) => {
     return res.send(responseObject);
 });
 
-router.get('phoneVerified/:user', (req, res) => {
+router.get('/phoneVerified/:username', (req, res) => {
     let responseObject = {};
     async.waterfall([
         function (callback) {
             firebaseDB.ref('users').once("value", function (snapshot) {
                 var user = '';
                 Object.keys(snapshot.val()).forEach(key => {
-                    if (snapshot.val()[key].userId === req.body.username) {
+                    if (snapshot.val()[key].userId === req.params.username) {
                         user = key;
-                    }
-                })
-                callback(user);
-            });
-        }, function (uuid, callback) {
-            firebaseDB.ref().child('/users/' + uuid).set({phoneVerified: true})
+                        firebaseDB.ref().child('/users/' + uuid).set({phoneVerified: true})
                 .then(
                     responseObject = {
                         message: 'Success!',
@@ -406,21 +401,27 @@ router.get('phoneVerified/:user', (req, res) => {
                     };
                 });
                 callback(responseObject);
+
+                    }
+                })
+                callback(user);
+            });
         }
     ], function (result, err) {
         res.send(result)
     });
 });
 
-router.get('emailVerified/:user', (req, res) => {
+router.get('/emailVerified/:username', (req, res) => {
     let responseObject = {};
     async.waterfall([
         function (callback) {
             firebaseDB.ref('users').once("value", function (snapshot) {
                 var user = '';
                 Object.keys(snapshot.val()).forEach(key => {
-                    if (snapshot.val()[key].userId === req.body.username) {
+                    if (snapshot.val()[key].userId === req.params.username) {
                         user = key;
+                        console.log(user)
                     }
                 })
                 callback(user);
