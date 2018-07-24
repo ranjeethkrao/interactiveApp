@@ -278,19 +278,21 @@ router.get('/findCountries', (req, res) => {
     return res.send(responseObject)
 });
 
-router.get('/fetchAllUsers', (req, res) => {
-    /* var userId = firebase.auth().currentUser.uid;
-    console.log(userId); */
-    return res.send(firebaseDB.ref().child('/users/').once('value'));
+router.get('/fetchUser/:username', (req, res) => {
+    let user = {};
+    firebaseDB.ref('users/' + req.params.username).once("value", function (snapshot) {
+        user = snapshot.val() || {};
+        res.send(user);
+    });
 });
 
-router.get('/fetchUser/:username', (req, res) => {
+router.get('/fetchUserByEmail/:email', (req, res) => {
     async.waterfall([
         function (callback) {
             firebaseDB.ref('users').once("value", function (snapshot) {
                 var user = {};
                 Object.keys(snapshot.val()).forEach(key => {
-                    if (snapshot.val()[key].userId === req.params.username) {
+                    if (snapshot.val()[key].email === req.params.email) {
                         user = snapshot.val()[key];
                     }
                 })

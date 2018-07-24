@@ -8,7 +8,7 @@ import 'rxjs/add/operator/map';
 @Injectable()
 export class RegisterService {
 
-  user: string = 'ranjitp';
+  user: string = '';
 
   constructor(private http: Http) { }
 
@@ -35,10 +35,6 @@ export class RegisterService {
 
   public getUserFromFirebase(username) {
     return this.http.get('/auth/fetchUser/' + username).map(res => res.json());
-  }
-
-  public getUsersFromFirebase() {
-    return this.http.get('/auth/fetchAllUsers').map(res => res.json());
   }
 
   public verifyEmail(email){

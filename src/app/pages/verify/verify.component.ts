@@ -1,6 +1,6 @@
 import { Component, OnInit, AfterViewInit } from '@angular/core';
 import { RegisterService } from '../register/register.service';
-import { Router } from '../../../../node_modules/@angular/router';
+import { Router, ActivatedRoute } from '../../../../node_modules/@angular/router';
 import * as firebase from 'firebase';
 import { VerifyService } from './verify.service';
 import swal from 'sweetalert2';
@@ -17,16 +17,40 @@ export class VerifyComponent implements OnInit, AfterViewInit {
   phoneVerified: boolean = false;
   emailVerified: boolean = true;
   smsSent: boolean = false;
+  invalid: boolean = false;
 
-  constructor(private reg: RegisterService, private router: Router, private verifyService: VerifyService) { }
+  constructor(private reg: RegisterService, private router: Router, private verifyService: VerifyService, private route: ActivatedRoute) { }
 
   ngOnInit() {
     let username = this.reg.getCurrentUser();
-    this.reg.getUserFromFirebase(username).subscribe(res => {
-      this.user = res;
-      this.phoneVerified = this.user.phoneVerified;
-      this.emailVerified = this.user.emailVerified;
-    });
+    if(username.length > 0){    //Users landing from registration or login page
+      this.reg.getUserFromFirebase(username).subscribe(res => {
+        this.user = res;
+        if(res['phoneVerified'] && res['emailVerified']){
+          this.phoneVerified = this.user.phoneVerified;
+          this.emailVerified = this.user.emailVerified;
+        }
+      });
+    } else {
+      this.route.queryParamMap.subscribe(params=>{   //Users landing from email link
+        let username = params.get('username');
+        if(username && username.length > 0){
+          this.reg.setCurrentUser(username);
+          this.reg.emailVerified().subscribe(data=>{
+            this.reg.getUserFromFirebase(username).subscribe(res => {
+              this.user = res;
+              if(res['phoneVerified'] && res['emailVerified']){
+                this.phoneVerified = this.user.phoneVerified;
+                this.emailVerified = this.user.emailVerified;
+              }
+            });
+          });
+          
+        } else {
+          this.invalid = true;    //Users trying to access verify page through URL
+        }
+      })
+    }
   }
 
   ngAfterViewInit() {
