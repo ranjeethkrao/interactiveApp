@@ -6,8 +6,6 @@ const connection = api.getDatabaseConnection();
 const firebase = api.getFirebase();
 const firebaseDB = api.getFirebaseDB();
 const async = require('async');
-const uuidv4 = require('uuid/v4');
-
 /* GET api listing. */
 
 /* router.get('/findCountries', (req, res) => {
@@ -359,15 +357,12 @@ router.post('/isUsernameUnique', (req, res) => {
 });
 
 router.post('/register', (req, res) => {
-    queryParams = req.body;
-
     responseObject = {};
-    let uuid = uuidv4();
-    console.log()
-    firebaseDB.ref().child('/users/' + uuid).set(getFormattedRegisterObject(queryParams))
+    user = getFormattedRegisterObject(req.body)
+    firebaseDB.ref().child('/users/' + user.username).set(user)
         .then(
             responseObject = {
-                message: 'User Registration Successfull !',
+                message: 'User Registration Successful !',
                 success: true
             }
         ).catch((err) => {
