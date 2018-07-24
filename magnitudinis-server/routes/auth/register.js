@@ -386,25 +386,23 @@ router.get('/phoneVerified/:username', (req, res) => {
             firebaseDB.ref('users').once("value", function (snapshot) {
                 var user = '';
                 Object.keys(snapshot.val()).forEach(key => {
-                    if (snapshot.val()[key].userId === req.params.username) {
-                        user = key;
-                        firebaseDB.ref().child('/users/' + uuid).set({phoneVerified: true})
-                .then(
-                    responseObject = {
-                        message: 'Success!',
-                        success: true
-                    }
-                ).catch((err) => {
-                    responseObject = {
-                        message: err.message,
-                        success: false
-                    };
-                });
-                callback(responseObject);
-
+                    if (snapshot.val()[key].username === req.params.username) {
+                        firebaseDB.ref().child('/users/' + key).update({ phoneVerified: true })
+                            .then(
+                                responseObject = {
+                                    message: 'Success!',
+                                    success: true
+                                }
+                            ).catch((err) => {
+                                responseObject = {
+                                    message: err.message,
+                                    success: false
+                                };
+                            });
                     }
                 })
-                callback(user);
+                callback(responseObject);
+
             });
         }
     ], function (result, err) {
@@ -419,27 +417,24 @@ router.get('/emailVerified/:username', (req, res) => {
             firebaseDB.ref('users').once("value", function (snapshot) {
                 var user = '';
                 Object.keys(snapshot.val()).forEach(key => {
-                    if (snapshot.val()[key].userId === req.params.username) {
-                        user = key;
-                        console.log(user)
+                    if (snapshot.val()[key].username === req.params.username) {
+                        firebaseDB.ref().child('/users/' + key).update({ emailVerified: true })
+                            .then(
+                                responseObject = {
+                                    message: 'Success!',
+                                    success: true
+                                }
+                            ).catch((err) => {
+                                responseObject = {
+                                    message: err.message,
+                                    success: false
+                                };
+                            });
                     }
                 })
-                callback(user);
-            });
-        }, function (uuid, callback) {
-            firebaseDB.ref().child('/users/' + uuid).set({emailVerified: true})
-                .then(
-                    responseObject = {
-                        message: 'Success!',
-                        success: true
-                    }
-                ).catch((err) => {
-                    responseObject = {
-                        message: err.message,
-                        success: false
-                    };
-                });
                 callback(responseObject);
+
+            });
         }
     ], function (result, err) {
         res.send(result)
