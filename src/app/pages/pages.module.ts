@@ -15,6 +15,7 @@ import { RegisterService } from './register/register.service';
 import { LoginComponent } from './login/login.component';
 import { VerifyComponent } from './verify/verify.component';
 import { VerifyService } from './verify/verify.service';
+import { LoginService } from './login/login.service';
 
 
 @NgModule({
@@ -34,7 +35,8 @@ import { VerifyService } from './verify/verify.service';
   ],
   providers: [
     RegisterService,
-    VerifyService
+    VerifyService,
+    LoginService
   ]
 })
 

@@ -304,7 +304,7 @@ export class RegisterComponent implements OnInit, AfterViewInit {
                 this.sendSMS($('[name="phone"]').intlTelInput('getNumber'))
 
                 //Send Email
-                // this.sendEmail();
+                this.sendEmail(values);
 
             }, (err) => {
                 swal('Oops...', 'Error Saving User', 'error');
@@ -315,9 +315,49 @@ export class RegisterComponent implements OnInit, AfterViewInit {
         }
     }
 
-    sendEmail() {
-
-    }
+    sendEmail(values) {        
+        const email = values['email'];
+        const username = values['username'];
+        const password = values['password'];
+        const actionCodeSettings = {
+          url: 'http://localhost:3000/#/verify?username=' + username
+        };
+        
+        // Create user in the firebase
+        firebase.auth().createUserWithEmailAndPassword(email, password)
+          .then(createUser => {
+            if (createUser) {
+              console.log('createUser:', createUser);
+              //  Signin with user credentials
+              firebase.auth().signInWithEmailAndPassword(email, password)
+              .then( sign => {
+                if (sign) {
+                  const name = values['firstname'] + ' ' + values['lastname'];
+                  const user = firebase.auth().currentUser;
+                  console.log('user: ', user);
+                  user.updateProfile({
+                    displayName: name,
+                    photoURL: ''
+                  })
+                  .then(() => {
+                    user.sendEmailVerification(actionCodeSettings)
+                    .then( result => {
+                    //   console.warn('succeed in Email Sent', user.emailVerified, result);
+                      this.registrationComplete = true;
+                    })
+                    .catch(err => swal(err.name, err.message, 'error'));
+                  })
+                  .catch(err => swal(err.name, err.message, 'error'));
+    
+                }
+              })
+              .catch(err => swal(err.name, err.message, 'error'));
+            }
+          })
+          .catch( err => {
+            swal(err.name, err.message, 'error');
+          });
+      }
 
 
     sendSMS(phone) {

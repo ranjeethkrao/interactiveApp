@@ -8,26 +8,6 @@ const firebaseDB = api.getFirebaseDB();
 const async = require('async');
 /* GET api listing. */
 
-/* router.get('/findCountries', (req, res) => {
-    responseObject = new Object();
-    connection.query('SELECT `id`, `name` FROM countries order by `name`', function(err, rows, fields){
-        if(!err) {
-            responseObject = {
-                data: rows,
-                success: true
-            }
-        }
-        else {
-            responseObject = {
-                message: 'Exception occurred : ' + err.message,
-                success: false
-            }
-        }
-
-        return res.send(responseObject);
-    });
-}); */
-
 router.get('/findCountries', (req, res) => {
     let responseObject = [
         { itemName: 'Afghanistan', code: 'AF' },
