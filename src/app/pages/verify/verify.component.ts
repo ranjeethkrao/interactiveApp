@@ -15,7 +15,7 @@ export class VerifyComponent implements OnInit, AfterViewInit {
   windowRef: any;
   user: any = {};
   phoneVerified: boolean = false;
-  emailVerified: boolean = true;
+  emailVerified: boolean = false;
   smsSent: boolean = false;
   invalid: boolean = false;
 
@@ -23,29 +23,36 @@ export class VerifyComponent implements OnInit, AfterViewInit {
 
   ngOnInit() {
     let username = this.reg.getCurrentUser();
-    if(username.length > 0){    //Users landing from registration or login page
+    if (username.length > 0) {    //Users landing from login page
+      console.log(username, 'if');
+
       this.reg.getUserFromFirebase(username).subscribe(res => {
         this.user = res;
-        if(res['phoneVerified'] && res['emailVerified']){
-          this.phoneVerified = this.user.phoneVerified;
-          this.emailVerified = this.user.emailVerified;
-        }
+        this.phoneVerified = this.user.phoneVerified;
+        this.emailVerified = this.user.emailVerified;
+
       });
     } else {
-      this.route.queryParamMap.subscribe(params=>{   //Users landing from email link
+      this.route.queryParamMap.subscribe(params => {   //Users landing from email link
+        let uid = params.get('uid');
         let username = params.get('username');
-        if(username && username.length > 0){
-          this.reg.setCurrentUser(username);
-          this.reg.emailVerified().subscribe(data=>{
+        if (username && username.length > 0) {
+          // this.reg.setCurrentUser(username);
+          this.reg.emailVerified(uid, username).subscribe(data => {
+
             this.reg.getUserFromFirebase(username).subscribe(res => {
-              this.user = res;
-              if(res['phoneVerified'] && res['emailVerified']){
+              if (Object.keys(res).length === 0) {
+                this.invalid = true;
+              } else {
+                this.user = res;
+
                 this.phoneVerified = this.user.phoneVerified;
-                this.emailVerified = this.user.emailVerified;
+                this.emailVerified = true;    //As we know this came from the email link
+
               }
-            });
+            })
           });
-          
+
         } else {
           this.invalid = true;    //Users trying to access verify page through URL
         }
@@ -125,7 +132,7 @@ export class VerifyComponent implements OnInit, AfterViewInit {
           title: 'You have successfully registered with your phone number !'
         });
         self.phoneVerified = true;
-        this.reg.phoneVerified().subscribe(data=>{});
+        this.reg.phoneVerified().subscribe(data => { });
       })
       .catch((error) => {
         swal({

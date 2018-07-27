@@ -262,9 +262,21 @@ router.get('/fetchUser/:username', (req, res) => {
     let user = {};
     firebaseDB.ref('users/' + req.params.username).once("value", function (snapshot) {
         user = snapshot.val() || {};
+        //Check for email verification
+        if(Object.keys(user).length > 0){
+            checkAndUpdateEmailVerification(user['email'], user['username']);
+        }
         res.send(user);
     });
 });
+
+function checkAndUpdateEmailVerification(email, username){
+    firebase.auth().getUserByEmail(email).then((user) => {
+        if(user.emailVerified){
+            firebaseDB.ref('users/' + username).update({ emailVerified: true }).then() 
+        }
+    })
+}
 
 router.get('/fetchUserByEmail/:email', (req, res) => {
     async.waterfall([
@@ -272,8 +284,10 @@ router.get('/fetchUserByEmail/:email', (req, res) => {
             firebaseDB.ref('users').once("value", function (snapshot) {
                 var user = {};
                 Object.keys(snapshot.val()).forEach(key => {
-                    if (snapshot.val()[key].email === req.params.email) {
-                        user = snapshot.val()[key];
+                    temp = snapshot.val()[key];
+                    if (temp.email === req.params.email) {
+                        user = temp;
+                        checkAndUpdateEmailVerification(temp.email, temp.username)
                     }
                 })
                 callback(user);
@@ -387,7 +401,7 @@ router.get('/phoneVerified/:username', (req, res) => {
     });
 });
 
-router.get('/emailVerified/:username', (req, res) => {
+router.get('/emailVerified/:uid/:username', (req, res) => {
     let responseObject = {};
     async.waterfall([
         function (callback) {

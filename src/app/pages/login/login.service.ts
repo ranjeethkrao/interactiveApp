@@ -1,12 +1,15 @@
 import { Injectable } from '@angular/core';
+import { Http } from '@angular/http';
 
 @Injectable()
 export class LoginService {
 
-  constructor() { }
+  constructor(private http: Http) { }
 
-  login(){
-    
+  login(){}
+
+  public getUserFromFirebase(email) {
+    return this.http.get('/auth/fetchUserByEmail/' + email).map(res => res.json());
   }
 
 }

@@ -319,15 +319,12 @@ export class RegisterComponent implements OnInit, AfterViewInit {
         const email = values['email'];
         const username = values['username'];
         const password = values['password'];
-        const actionCodeSettings = {
-          url: 'http://localhost:3000/#/verify?username=' + username
-        };
+        
         
         // Create user in the firebase
         firebase.auth().createUserWithEmailAndPassword(email, password)
           .then(createUser => {
             if (createUser) {
-              console.log('createUser:', createUser);
               //  Signin with user credentials
               firebase.auth().signInWithEmailAndPassword(email, password)
               .then( sign => {
@@ -335,6 +332,9 @@ export class RegisterComponent implements OnInit, AfterViewInit {
                   const name = values['firstname'] + ' ' + values['lastname'];
                   const user = firebase.auth().currentUser;
                   console.log('user: ', user);
+                  const actionCodeSettings = {
+                    url: 'http://localhost:3000/#/verify?uid=' + firebase.auth().currentUser.uid + '&username=' + username
+                  };
                   user.updateProfile({
                     displayName: name,
                     photoURL: ''
@@ -348,7 +348,6 @@ export class RegisterComponent implements OnInit, AfterViewInit {
                     .catch(err => swal(err.name, err.message, 'error'));
                   })
                   .catch(err => swal(err.name, err.message, 'error'));
-    
                 }
               })
               .catch(err => swal(err.name, err.message, 'error'));
@@ -387,7 +386,7 @@ export class RegisterComponent implements OnInit, AfterViewInit {
                     title: 'You have successfully registered with your phone number !'
                 });
                 self.phoneVerified = true;
-                this.reg.phoneVerified().subscribe(data=>{});
+                self.reg.phoneVerified().subscribe(data=>{});
             })
             .catch((error) => {
                 swal({

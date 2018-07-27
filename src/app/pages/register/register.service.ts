@@ -1,8 +1,5 @@
 import { Injectable } from '@angular/core';
 import { Http, URLSearchParams, RequestOptions } from '@angular/http';
-import { Observable } from 'rxjs/Observable';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
-
 import 'rxjs/add/operator/map';
 
 @Injectable()
@@ -30,6 +27,7 @@ export class RegisterService {
 
   public saveUser(values: Object) {
     delete values['confPass'];
+    this.user = values['username'];
     return this.http.post('/auth/register', values).map(res => res.json());
   }
 
@@ -53,10 +51,10 @@ export class RegisterService {
     return this.http.get('/auth/phoneVerified/' + this.user).map(res => res.json());
   }
 
-  public emailVerified(){
-    return this.http.get('/auth/emailVerified/' + this.user).map(res => res.json());
+  public emailVerified(uid, username){
+    return this.http.get('/auth/emailVerified/' + uid + '/' + username).map(res => res.json());
   }
-
+ 
   public getTradingExperience() {
     return [
       {itemName: "0", id: 0},

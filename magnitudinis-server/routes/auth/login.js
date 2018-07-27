@@ -1,7 +1,7 @@
 const api = require('../api');
 const express = api.getExpress();
 const router = express.Router();
-const connection = api.getDatabaseConnection();
+const firebaseDB = api.getFirebaseDB();
 
 /* GET api listing. */
 router.post('/login', (req, res) => {

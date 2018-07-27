@@ -3,6 +3,8 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { CustomValidators } from 'ng2-validation';
 import { RegisterService } from '../register/register.service';
 import { LoginService } from './login.service';
+import { Router } from '@angular/router';
+import * as firebase from 'firebase';
 
 declare var $: any;
 
@@ -14,13 +16,9 @@ declare var $: any;
 export class LoginComponent implements OnInit {
     test: Date = new Date();
     private toggleButton: any;
-    // private sidebarVisible: boolean;
-    // private nativeElement: Node;
     public loginForm: FormGroup;
 
-    constructor(private element: ElementRef, fb: FormBuilder, private loginService: LoginService) {
-        // this.nativeElement = element.nativeElement;
-        // this.sidebarVisible = false;
+    constructor(private element: ElementRef, fb: FormBuilder, private loginService: LoginService, private router: Router, private reg: RegisterService) {
 
         this.loginForm = fb.group({
             'email': ['', Validators.compose([Validators.required, CustomValidators.email])],
@@ -29,9 +27,6 @@ export class LoginComponent implements OnInit {
     }
 
     ngOnInit() {
-        // var navbar : HTMLElement = this.element.nativeElement;
-        // this.toggleButton = navbar.getElementsByClassName('navbar-toggle')[0];
-
         setTimeout(function() {
             // after 1000 ms we add the class animated to the login/register card
             $('.card').removeClass('card-hidden');
@@ -55,7 +50,13 @@ export class LoginComponent implements OnInit {
     } */
 
     login(val){
-        console.log(val);
+        console.log(firebase.auth().currentUser);
+        this.loginService.getUserFromFirebase(val.email).subscribe(user =>{
+            this.reg.setCurrentUser(user.username);
+            if(!user['phoneVerified'] || !user['emailVerified']){
+                this.router.navigate(['/verify'], { queryParams: {username: user.username} });
+            }
+        })
         // this.loginService.login(val).then(res=>{
 
         // })

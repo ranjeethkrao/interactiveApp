@@ -34,7 +34,7 @@
                         <div class="wizard-container">
                             <div *ngIf="!registrationComplete">
                                 <div class="card wizard-card" data-color="rose" id="wizardProfile">
-                                    <form [formGroup]="tradersRegForm" (ngSubmit)="onSubmit(tradersRegForm.value)">
+                                    <form [formGroup]="tradersRegForm">
                                         <div class="wizard-header">
                                             <h3 class="wizard-title">
                                                 Build Your Profile
@@ -207,7 +207,8 @@
                                         <div class="wizard-footer">
                                             <div class="pull-right">
                                                 <input type='button' class='btn btn-next btn-fill btn-rose btn-wd' name='next' value='Next' />
-                                                <input type='submit' class='btn btn-finish btn-fill btn-rose btn-wd' name='finish' value='Finish' />
+                                                <input type='button' class='btn btn-finish btn-fill btn-rose btn-wd' name='finish' value='Finish' (click)="onSubmit(tradersRegForm.value)"
+                                                />
                                             </div>
                                             <div class="pull-left">
                                                 <input type='button' class='btn btn-previous btn-fill btn-default btn-wd' name='previous' value='Previous' />
@@ -235,8 +236,8 @@
                                                 <label class="control-label">Verification Code</label>
                                                 <input type="number" class="form-control" name="verificationCode" id="verificationCode" #vc>
                                                 <div style="text-align: center">
-                                                    <input type='button' class='btn btn-fill btn-rose btn-wd' name='verify' value='Verify'
-                                                        (click)="verifyLoginCode(vc.value)" />
+                                                    <input type='button' class='btn btn-fill btn-rose btn-wd' name='verify' value='Verify' (click)="verifyLoginCode(vc.value)"
+                                                    />
                                                 </div>
                                                 <!-- <button (click)="verifyLoginCode(vc.value)">Verify</button> -->
                                             </div>
@@ -248,8 +249,8 @@
                                         <h5>Also please verify your email by clicking on the link we sent you. This is necessary
                                             before Login.</h5>
                                         <div style="text-align: center">
-                                            <input type='button' class='btn btn-fill btn-rose btn-wd' name='gotoLogin' value='Proceed to Login'
-                                                (click)="gotoLogin()" />
+                                            <input type='button' class='btn btn-fill btn-rose btn-wd' name='gotoLogin' value='Proceed to Login' (click)="gotoLogin()"
+                                            />
                                         </div>
                                     </div>
                                 </div>
@@ -259,7 +260,10 @@
                                 <div class="card wizard-card" data-color="rose" id="wizardProfile2">
                                     <div class="wizard-header">
                                         <h3 class="wizard-title">
-                                            Phone number has been verified!
+                                            You have verified your phone number!
+                                            <span>
+                                                <i class="material-icons" style="color: #34b7f1">done_all</i>
+                                            </span>
                                         </h3>
                                     </div>
                                     <div class="clearfix"></div>
@@ -267,8 +271,8 @@
                                         <h5>Also please verify your email by clicking on the link we sent you. This is necessary
                                             before Login.</h5>
                                         <div style="text-align: center">
-                                            <input type='button' class='btn btn-fill btn-rose btn-wd' name='gotoLogin' value='Proceed to Login'
-                                                (click)="gotoLogin()" />
+                                            <input type='button' class='btn btn-fill btn-rose btn-wd' name='gotoLogin' value='Proceed to Login' (click)="gotoLogin()"
+                                            />
                                         </div>
                                     </div>
                                 </div>
