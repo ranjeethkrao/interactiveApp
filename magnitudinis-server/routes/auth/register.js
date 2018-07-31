@@ -263,17 +263,17 @@ router.get('/fetchUser/:username', (req, res) => {
     firebaseDB.ref('users/' + req.params.username).once("value", function (snapshot) {
         user = snapshot.val() || {};
         //Check for email verification
-        if(Object.keys(user).length > 0){
+        if (Object.keys(user).length > 0) {
             checkAndUpdateEmailVerification(user['email'], user['username']);
         }
         res.send(user);
     });
 });
 
-function checkAndUpdateEmailVerification(email, username){
+function checkAndUpdateEmailVerification(email, username) {
     firebase.auth().getUserByEmail(email).then((user) => {
-        if(user.emailVerified){
-            firebaseDB.ref('users/' + username).update({ emailVerified: true }).then() 
+        if (user.emailVerified) {
+            firebaseDB.ref('users/' + username).update({ emailVerified: true }).then()
         }
     })
 }
@@ -431,6 +431,18 @@ router.get('/emailVerified/:uid/:username', (req, res) => {
         res.send(result)
     });
 });
+
+
+router.get('/verifyToken/:token', (req, res) => {
+    firebase.auth().verifyIdToken(req.params.token)
+        .then(function (decodedToken) {
+            var uid = decodedToken.uid;
+            console.log(decodedToken);
+        }).catch(function (error) {
+            // Handle error
+        });
+
+})
 
 function getFormattedRegisterObject(obj) {
     if (obj) {

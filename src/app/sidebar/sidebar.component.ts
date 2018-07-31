@@ -1,4 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import * as firebase from 'firebase';
+import { Router } from '../../../node_modules/@angular/router';
+import { AuthService } from '../services/auth.service';
 
 declare const $: any;
 
@@ -43,6 +46,12 @@ export const ROUTES: RouteInfo[] = [{
 
 export class SidebarComponent implements OnInit {
     public menuItems: any[];
+    displayName: '';
+
+    constructor(private route: Router, private authService: AuthService) {
+        let user = JSON.parse(localStorage.getItem('user'));
+        this.displayName = user.displayName || '';
+    }
 
     isNotMobileMenu() {
         if ($(window).width() > 991) {
@@ -64,5 +73,10 @@ export class SidebarComponent implements OnInit {
             $('html').addClass('perfect-scrollbar-off');
         }
         this.menuItems = ROUTES.filter(menuItem => menuItem);
+    }
+
+    logout(){
+        this.authService.logout();
+        this.route.navigate(['/login']);
     }
 }

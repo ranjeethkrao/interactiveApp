@@ -5,37 +5,41 @@ const firebaseDB = api.getFirebaseDB();
 const firebasePath = '/status/result/1/data';
 liveTradeData = {};
 
-firebaseDB.ref(firebasePath).on("child_changed", (snapshot)=>{
-    liveTradeData[snapshot.ref.key]=snapshot.val();
+firebaseDB.ref(firebasePath).on("child_changed", (snapshot) => {
+    liveTradeData[snapshot.ref.key] = snapshot.val();
 });
 
 router.get('/getAllExchange', (req, res) => {
     responseObject = [];
-    firebaseDB.ref(firebasePath).once('value', (snapshot)=>{
-        list = [...new Set(snapshot.val().map(item => item.Exchange))];
-        list.forEach((element, index) => {
-            responseObject.push({ID: index, VALUE: element})
-        });
-        return res.send(responseObject);
-    });    
+    firebaseDB.ref(firebasePath).once('value', (snapshot) => {
+        if (snapshot.val()) {
+            list = [...new Set(snapshot.val().map(item => item.Exchange))];
+            list.forEach((element, index) => {
+                responseObject.push({ ID: index, VALUE: element })
+            });
+            return res.send(responseObject);
+        } else {
+            return res.send(responseObject);
+        }
+    });
 });
 
 router.get('/getDistinctSymbol', (req, res) => {
     responseObject = [];
     queryParams = req.query['exchange'];
-    if(queryParams){
+    if (queryParams) {
         exchanges = queryParams.split(',');
-        firebaseDB.ref(firebasePath).once('value', (snapshot)=>{
-            exchanges.forEach(exchange=>{
-                list = [...new Set(snapshot.val().filter(data=>data.Exchange === exchange))];
+        firebaseDB.ref(firebasePath).once('value', (snapshot) => {
+            exchanges.forEach(exchange => {
+                list = [...new Set(snapshot.val().filter(data => data.Exchange === exchange))];
                 list.forEach((element, index) => {
-                    responseObject.push({ID: index, VALUE: element})
+                    responseObject.push({ ID: index, VALUE: element })
                 });
             })
             return res.send(responseObject);
         });
     }
-       
+
 });
 
 
@@ -46,5 +50,5 @@ router.get('/getLiveTradeData', (req, res) => {
 });
 
 module.exports = {
-    router : router
+    router: router
 }

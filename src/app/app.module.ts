@@ -17,6 +17,8 @@ import { AdminLayoutComponent } from './layouts/admin/admin-layout.component';
 import { AuthLayoutComponent } from './layouts/auth/auth-layout.component';
 
 import { AppRoutes } from './app.routing';
+import { AuthService } from './services/auth.service';
+import { AuthGuard } from './services/auth.guard';
 
 firebase.initializeApp(environment.firebase);
 
@@ -36,6 +38,10 @@ firebase.initializeApp(environment.firebase);
         AdminLayoutComponent,
         AuthLayoutComponent
     ],
+    providers: [
+        AuthService,
+        AuthGuard
+      ],
     bootstrap:[ 
         AppComponent 
     ]
