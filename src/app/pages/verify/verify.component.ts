@@ -18,18 +18,19 @@ export class VerifyComponent implements OnInit, AfterViewInit {
   emailVerified: boolean = false;
   smsSent: boolean = false;
   invalid: boolean = false;
+  phone: string = '';
 
   constructor(private reg: RegisterService, private router: Router, private verifyService: VerifyService, private route: ActivatedRoute) { }
 
   ngOnInit() {
     let username = this.reg.getCurrentUser();
     if (username.length > 0) {    //Users landing from login page
-      console.log(username, 'if');
 
       this.reg.getUserFromFirebase(username).subscribe(res => {
         this.user = res;
         this.phoneVerified = this.user.phoneVerified;
         this.emailVerified = this.user.emailVerified;
+        this.phone = this.user.phone;
 
       });
     } else {
@@ -48,7 +49,7 @@ export class VerifyComponent implements OnInit, AfterViewInit {
 
                 this.phoneVerified = this.user.phoneVerified;
                 this.emailVerified = true;    //As we know this came from the email link
-
+                this.phone = this.user.phone;
               }
             })
           });
@@ -75,22 +76,26 @@ export class VerifyComponent implements OnInit, AfterViewInit {
   }
 
   resendOtp() {
-    // this.user.phone=;
-    const appVerifier = this.windowRef.recaptchaVerifier;
-    firebase.auth().signInWithPhoneNumber("+919740433888", appVerifier)
-      .then((result) => {
-        this.windowRef.confirmationResult = result;
-        if (this.windowRef.confirmationResult) {
-          this.smsSent = true;
-        }
-      })
-      .catch((error) => {
-        swal(
-          'Oops...',
-          error.message,
-          'error'
-        )
-      });
+    if(this.phone.length === 0){
+      swal('Oops', 'There was a problem fetching your mobile number', 'error');
+    } else {
+      const appVerifier = this.windowRef.recaptchaVerifier;
+      firebase.auth().signInWithPhoneNumber(this.phone, appVerifier)
+        .then((result) => {
+          this.windowRef.confirmationResult = result;
+          if (this.windowRef.confirmationResult) {
+            this.smsSent = true;
+          }
+        })
+        .catch((error) => {
+          console.log(error)
+          swal(
+            'Oops...',
+            error.message,
+            'error'
+          )
+        });
+      }
   }
 
 
@@ -132,7 +137,7 @@ export class VerifyComponent implements OnInit, AfterViewInit {
           title: 'You have successfully registered with your phone number !'
         });
         self.phoneVerified = true;
-        this.reg.phoneVerified().subscribe(data => { });
+        self.reg.phoneVerified().subscribe(data => { });
       })
       .catch((error) => {
         swal({

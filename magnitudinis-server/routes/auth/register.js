@@ -437,7 +437,6 @@ router.get('/verifyToken/:token', (req, res) => {
     firebase.auth().verifyIdToken(req.params.token)
         .then(function (decodedToken) {
             var uid = decodedToken.uid;
-            console.log(decodedToken);
         }).catch(function (error) {
             // Handle error
         });

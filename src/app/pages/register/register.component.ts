@@ -72,7 +72,7 @@ export class RegisterComponent implements OnInit, AfterViewInit {
             'firstname': ['', Validators.compose([CustomValidators.rangeLength([5, 30])])],
             'lastname': ['', Validators.compose([CustomValidators.rangeLength([3, 30])])],
             'email': ['', Validators.compose([CustomValidators.email])],
-            'phone': ['', Validators.compose([CustomValidators.phone('IN')])],
+            'phone': ['', Validators.compose([CustomValidators.phone('IN'), CustomValidators.phone('OM')])],
             'addressLine1': ['', Validators.compose([Validators.required])],
             'addressLine2': ['', Validators.compose([Validators.required])],
             'pincode': ['', Validators.compose([CustomValidators.digits])],
@@ -161,9 +161,9 @@ export class RegisterComponent implements OnInit, AfterViewInit {
 
     ngAfterViewInit() {
 
-        $.validator.addMethod('magnitudinisphone', function (value, element) {
-            return this.optional(element) || /([0-9]{10})|(\([0-9]{3}\)\s+[0-9]{3}\-[0-9]{4})/.test(value);
-        }, "Please enter a valid phone number");
+        // $.validator.addMethod('magnitudinisphone', function (value, element) {
+        //     return this.optional(element) || /([0-9]{10})|(\([0-9]{3}\)\s+[0-9]{3}\-[0-9]{4})/.test(value);
+        // }, "Please enter a valid phone number");
 
         const $validator = $(".wizard-card form").validate({
             rules: {
@@ -182,7 +182,9 @@ export class RegisterComponent implements OnInit, AfterViewInit {
                     }
                 },
                 phone: {
-                    required: true, magnitudinisphone: true, remote: {
+                    required: true, 
+                    // magnitudinisphone: true, 
+                    remote: {
                         url: "/auth/isPhoneUnique",
                         type: "post",
                         data: {
@@ -297,11 +299,12 @@ export class RegisterComponent implements OnInit, AfterViewInit {
         const $valid = $('.wizard-card form').valid();
         if ($valid) {
 
+            values['phone'] = $('[name="phone"]').intlTelInput('getNumber');
             //Save User
             this.reg.saveUser(values).subscribe((data) => {
 
                 //Send SMS
-                this.sendSMS($('[name="phone"]').intlTelInput('getNumber'))
+                this.sendSMS(values['phone']);
 
                 //Send Email
                 this.sendEmail(values);
@@ -331,7 +334,6 @@ export class RegisterComponent implements OnInit, AfterViewInit {
                 if (sign) {
                   const name = values['firstname'] + ' ' + values['lastname'];
                   const user = firebase.auth().currentUser;
-                  console.log('user: ', user);
                   const actionCodeSettings = {
                     url: 'http://localhost:3000/#/verify?uid=' + firebase.auth().currentUser.uid + '&username=' + username
                   };
