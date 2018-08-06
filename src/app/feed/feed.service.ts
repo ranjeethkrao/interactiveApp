@@ -1,7 +1,5 @@
 import { Injectable } from '@angular/core';
 import { Http, URLSearchParams, RequestOptions } from '@angular/http';
-import { Observable } from 'rxjs/Observable';
-import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import 'rxjs/add/operator/map';
 
 @Injectable()
@@ -40,6 +38,14 @@ export class FeedService {
     let options = new RequestOptions({ search: params.toString() });
 
     return this.http.get('/live/getDistinctSymbol', options).map(res => res.json());
+  }
+
+  public getSelectedItems(email){
+    return this.http.get('/live/getSelectedItems/' + email).map(res => res.json());
+  }
+
+  public setSelectedItems(email, items){
+    return this.http.post('/live/setSelectedItems/' + email, items).map(res => res.json());
   }
 
 }

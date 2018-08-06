@@ -99,6 +99,13 @@ export class LiveComponent implements OnInit, OnDestroy {
         });
       }
     });
+
+    this.hs.getSelectedItems(JSON.parse(localStorage.getItem('user')).email).subscribe((data) => {
+      this.exchangeSelectionItems = data.exchange;
+      this.symbolSelectedItems = data.symbols;
+      this.onExchangeItemSelect(null);
+      this.onSymbolItemSelect(null);      
+    })
   }
 
   onGridReady(params){
@@ -115,7 +122,8 @@ export class LiveComponent implements OnInit, OnDestroy {
       clearTimeout(this.timer);
     } else {
       this.hs.fetchDistinctSymbol(this.exchangeSelectionItems.map(item=>item['itemName'])).subscribe((data) => {
-        this.symbol.reset();
+        // if(item)     // A null means that selection is not from grid
+        //   this.symbol.reset();
         this.symbolOptions = [];
         for (let obj of data) {
           this.symbolOptions.push({
@@ -129,10 +137,12 @@ export class LiveComponent implements OnInit, OnDestroy {
   }
 
   onSymbolItemSelect(item) {
+    if(item)
+      this.setSelected();   // A null means that selection is not from grid
     this.rowData = this.symbolSelectedItems.map(symbol=>symbol.data);
     this.liveGridOptions.api.setRowData(this.rowData);
     clearTimeout(this.timer);
-    if(this.symbolSelectedItems.length > 0){     
+    if(this.symbolSelectedItems.length > 0){
       this.timeoutTarget(this.liveGridApi);
     }
   }
@@ -165,6 +175,10 @@ export class LiveComponent implements OnInit, OnDestroy {
       
     });
     this.timer = setTimeout(this.timeoutTarget.bind(this), 1000, gridApi);
+  }
+
+  setSelected(){
+    this.hs.setSelectedItems(JSON.parse(localStorage.getItem('user')).email, {exchange: this.exchangeSelectionItems, symbols: this.symbolSelectedItems}).subscribe(res => {});
   }
 
   ngOnDestroy(){
