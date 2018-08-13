@@ -137,7 +137,10 @@ export class VerifyComponent implements OnInit, AfterViewInit {
           title: 'You have successfully registered with your phone number !'
         });
         self.phoneVerified = true;
-        self.reg.phoneVerified().subscribe(data => { });
+        self.route.queryParamMap.subscribe(params => {   //Users landing from email link
+          let username = params.get('username');
+          self.reg.phoneVerified(username).subscribe(data => { });
+        });
       })
       .catch((error) => {
         swal({

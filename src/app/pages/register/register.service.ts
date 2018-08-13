@@ -47,8 +47,8 @@ export class RegisterService {
     return this.http.get('/auth/userIdExists?email=' + email).map(res => res.json());
   }
 
-  public phoneVerified(){
-    return this.http.get('/auth/phoneVerified/' + this.user).map(res => res.json());
+  public phoneVerified(username){
+    return this.http.get('/auth/phoneVerified/' + username).map(res => res.json());
   }
 
   public emailVerified(uid, username){

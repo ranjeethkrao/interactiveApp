@@ -65,6 +65,7 @@ export class RegisterComponent implements OnInit, AfterViewInit {
 
     private registrationComplete: boolean = false;
     private phoneVerified: boolean = false;
+    phoneNum: any;
 
     constructor(private reg: RegisterService, fb: FormBuilder, private router: Router) {
 
@@ -363,6 +364,7 @@ export class RegisterComponent implements OnInit, AfterViewInit {
 
     sendSMS(phone) {
         const appVerifier = this.windowRef.recaptchaVerifier;
+        this.phoneNum = phone;
         firebase.auth().signInWithPhoneNumber(phone, appVerifier)
             .then((result) => {
                 this.windowRef.confirmationResult = result;
@@ -388,7 +390,7 @@ export class RegisterComponent implements OnInit, AfterViewInit {
                     title: 'You have successfully registered with your phone number !'
                 });
                 self.phoneVerified = true;
-                self.reg.phoneVerified().subscribe(data=>{});
+                self.reg.phoneVerified(this.phoneNum).subscribe(data=>{});
             })
             .catch((error) => {
                 swal({
