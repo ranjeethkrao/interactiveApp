@@ -340,7 +340,7 @@ router.post('/isUsernameUnique', (req, res) => {
             firebaseDB.ref('users').once("value", function (snapshot) {
                 var exists = true;
                 Object.keys(snapshot.val()).forEach(key => {
-                    if (snapshot.val()[key].userId === req.body.username) {
+                    if (snapshot.val()[key].username === req.body.username) {
                         exists = false;
                     }
                 })

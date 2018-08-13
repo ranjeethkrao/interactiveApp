@@ -189,7 +189,7 @@ export class RegisterComponent implements OnInit, AfterViewInit {
                         type: "post",
                         data: {
                             phone: function () {
-                                return $("#phone").val();
+                                return $('[name="phone"]').intlTelInput('getNumber');
                             }
                         },
                         dataType: 'json'
