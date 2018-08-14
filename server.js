@@ -25,14 +25,14 @@ app.use('/historic', tradeRoute.histTradeRoute);
 app.use('/live', tradeRoute.liveTradeRoute);
 
 // Catch all other routes and return the index file
-app.get('*', (req, res) => {
+app.get('/*', (req, res) => {
     res.sendFile(path.join(__dirname, 'dist/index.html'));
 });
 
 /**
 * Get port from environment and store in Express.
 */
-const port = process.env.PORT || '3000';
+const port = process.env.PORT || '8080';
 const host = process.host || 'localhost';
 app.set('port', port);
 
