@@ -43,28 +43,28 @@ export class RegisterComponent implements OnInit, AfterViewInit {
     windowRef: any;
     userData: Observable<any[]>;
 
-    private countryOptions = [];
-    private countrySettings = {};
-    private countrySelectedItem = [];
+    public countryOptions = [];
+    public countrySettings = {};
+    public countrySelectedItem = [];
 
-    private tradingExpOptions = [];
-    private tradingExpSettings = {};
-    private tradingExpSelectedItem = [];
+    public tradingExpOptions = [];
+    public tradingExpSettings = {};
+    public tradingExpSelectedItem = [];
 
-    private tradingFeqOptions = [];
-    private tradeFeqSettings = {};
-    private tradeFeqSelectedItem = [];
+    public tradingFeqOptions = [];
+    public tradeFeqSettings = {};
+    public tradeFeqSelectedItem = [];
 
-    private brokeAccOptions = [];
-    private brokeAccSettings = {};
-    private brokeAccSelectedItem = [];
+    public brokeAccOptions = [];
+    public brokeAccSettings = {};
+    public brokeAccSelectedItem = [];
 
-    private interestOptions = [];
-    private interestSettings = {};
-    private interestSelectedItems = [];
+    public interestOptions = [];
+    public interestSettings = {};
+    public interestSelectedItems = [];
 
-    private registrationComplete: boolean = false;
-    private phoneVerified: boolean = false;
+    public registrationComplete: boolean = false;
+    public phoneVerified: boolean = false;
     phoneNum: any;
 
     constructor(private reg: RegisterService, fb: FormBuilder, private router: Router) {

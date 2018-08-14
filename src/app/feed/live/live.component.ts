@@ -19,18 +19,18 @@ export class LiveComponent implements OnInit, OnDestroy {
   public liveGridOptions: GridOptions;
   public liveColumnApi: ColumnApi;
 
-  private symbolOptions = [];
-  private symbolDropdownSettings = {};
-  private symbolSelectedItems = [];
+  public symbolOptions = [];
+  public symbolDropdownSettings = {};
+  public symbolSelectedItems = [];
 
-  private exchangeOptions = [];
-  private exchangeDropdownSettings = {};
-  private exchangeSelectionItems = [];
+  public exchangeOptions = [];
+  public exchangeDropdownSettings = {};
+  public exchangeSelectionItems = [];
 
-  private liveTradeFirebaseData: any;
-  private rowData = [];
+  public liveTradeFirebaseData: any;
+  public rowData = [];
 
-  private timer;
+  public timer;
 
   constructor(fb: FormBuilder, private hs: FeedService) {
 

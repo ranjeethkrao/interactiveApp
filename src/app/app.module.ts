@@ -8,7 +8,7 @@ import { CommonModule } from '@angular/common';
 
 import * as firebase from 'firebase';
 
-import { environment } from '../environments/environment';
+import { fb } from '../environments/firebase';
 import { AppComponent } from './app.component';
 import { SidebarModule } from './sidebar/sidebar.module';
 import { FooterModule } from './shared/footer/footer.module';
@@ -20,7 +20,7 @@ import { AppRoutes } from './app.routing';
 import { AuthService } from './services/auth.service';
 import { AuthGuard } from './services/auth.guard';
 
-firebase.initializeApp(environment.firebase);
+firebase.initializeApp(fb.firebase);
 
 @NgModule({
     imports:[

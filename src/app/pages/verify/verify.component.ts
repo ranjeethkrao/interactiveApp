@@ -19,6 +19,7 @@ export class VerifyComponent implements OnInit, AfterViewInit {
   smsSent: boolean = false;
   invalid: boolean = false;
   phone: string = '';
+  test: Date = new Date();
 
   constructor(private reg: RegisterService, private router: Router, private verifyService: VerifyService, private route: ActivatedRoute) { }
 

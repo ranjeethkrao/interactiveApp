@@ -19,30 +19,30 @@ declare const $: any;
 })
 export class HistoricComponent implements OnInit {
 
-  private form: FormGroup;
-  private symbol: AbstractControl;
-  private exchange: AbstractControl;
-  private dateRangeObj: any;
+  public form: FormGroup;
+  public symbol: AbstractControl;
+  public exchange: AbstractControl;
+  public dateRangeObj: any;
 
-  private mainInput = {
+  public mainInput = {
     start: moment().subtract(12, 'month'),
     end: moment().subtract(6, 'month')
   }
 
-  private historicGridOptions: GridOptions;
+  public historicGridOptions: GridOptions;
 
-  private symbolOptions = [];
-  private symbolDropdownSettings = {};
-  private symbolSelectedItems = [];
+  public symbolOptions = [];
+  public symbolDropdownSettings = {};
+  public symbolSelectedItems = [];
 
-  private exchangeOptions = [];
-  private exchangeDropdownSettings = {};
-  private exchangeSelectionItems = [];
+  public exchangeOptions = [];
+  public exchangeDropdownSettings = {};
+  public exchangeSelectionItems = [];
 
   constructor(
     fb: FormBuilder,
     private hs: FeedService,
-    public datePipe: DatePipe,
+    private datePipe: DatePipe,
     private daterangepickerOptions: DaterangepickerConfig) {
     this.form = fb.group({
       'symbol': ['', Validators.compose([Validators.required])],
@@ -129,7 +129,7 @@ export class HistoricComponent implements OnInit {
     return this.datePipe.transform(date, format);
   }
 
-  private selectedDate(value: any, dateInput: any) {
+  public selectedDate(value: any, dateInput: any) {
     this.mainInput.start = value.start;
     this.mainInput.end = value.end;
     this.dateRangeObj = value;
