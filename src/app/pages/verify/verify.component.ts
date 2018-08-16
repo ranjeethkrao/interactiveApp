@@ -39,7 +39,7 @@ export class VerifyComponent implements OnInit, AfterViewInit {
         let uid = params.get('uid');
         let username = params.get('username');
         if (username && username.length > 0) {
-          // this.reg.setCurrentUser(username);
+          this.reg.setCurrentUser(username);
           this.reg.emailVerified(uid, username).subscribe(data => {
 
             this.reg.getUserFromFirebase(username).subscribe(res => {

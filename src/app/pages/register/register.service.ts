@@ -48,10 +48,12 @@ export class RegisterService {
   }
 
   public phoneVerified(username){
+    this.user = username;
     return this.http.get('/auth/phoneVerified/' + username).map(res => res.json());
   }
 
   public emailVerified(uid, username){
+    this.user = username;
     return this.http.get('/auth/emailVerified/' + uid + '/' + username).map(res => res.json());
   }
  

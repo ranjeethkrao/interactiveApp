@@ -9,6 +9,7 @@ import { RegisterService } from './register.service';
 import * as firebase from 'firebase';
 import swal from 'sweetalert2';
 import { Observable } from 'rxjs/Observable';
+import { environment } from '../../../environments/environment.prod';
 
 declare const $: any;
 
@@ -65,7 +66,7 @@ export class RegisterComponent implements OnInit, AfterViewInit {
 
     public registrationComplete: boolean = false;
     public phoneVerified: boolean = false;
-    phoneNum: any;
+    currentUser: string = '';
 
     constructor(private reg: RegisterService, fb: FormBuilder, private router: Router) {
 
@@ -301,6 +302,7 @@ export class RegisterComponent implements OnInit, AfterViewInit {
         if ($valid) {
 
             values['phone'] = $('[name="phone"]').intlTelInput('getNumber');
+            this.currentUser = values['username'];
             //Save User
             this.reg.saveUser(values).subscribe((data) => {
 
@@ -335,9 +337,18 @@ export class RegisterComponent implements OnInit, AfterViewInit {
                 if (sign) {
                   const name = values['firstname'] + ' ' + values['lastname'];
                   const user = firebase.auth().currentUser;
-                  const actionCodeSettings = {
-                    url: 'http://localhost:3000/#/verify?uid=' + firebase.auth().currentUser.uid + '&username=' + username
-                  };
+                  let actionCodeSettings;
+                  if(environment.production){
+                    actionCodeSettings = {
+                        url: 'https://magnitudinis.herokuapp.com/#/verify?uid=' + firebase.auth().currentUser.uid + '&username=' + username
+                      };
+                  } else {
+                    actionCodeSettings = {
+                        url: 'http://localhost:3000/#/verify?uid=' + firebase.auth().currentUser.uid + '&username=' + username
+                      };
+
+                  }
+                  
                   user.updateProfile({
                     displayName: name,
                     photoURL: ''
@@ -364,7 +375,6 @@ export class RegisterComponent implements OnInit, AfterViewInit {
 
     sendSMS(phone) {
         const appVerifier = this.windowRef.recaptchaVerifier;
-        this.phoneNum = phone;
         firebase.auth().signInWithPhoneNumber(phone, appVerifier)
             .then((result) => {
                 this.windowRef.confirmationResult = result;
@@ -390,7 +400,7 @@ export class RegisterComponent implements OnInit, AfterViewInit {
                     title: 'You have successfully registered with your phone number !'
                 });
                 self.phoneVerified = true;
-                self.reg.phoneVerified(this.phoneNum).subscribe(data=>{});
+                self.reg.phoneVerified(this.currentUser).subscribe(data=>{});
             })
             .catch((error) => {
                 swal({
