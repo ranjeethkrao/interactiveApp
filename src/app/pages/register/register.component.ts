@@ -302,6 +302,7 @@ export class RegisterComponent implements OnInit, AfterViewInit {
         if ($valid) {
 
             values['phone'] = $('[name="phone"]').intlTelInput('getNumber');
+            values['userType'] = 'general';
             this.currentUser = values['username'];
             //Save User
             this.reg.saveUser(values).subscribe((data) => {
