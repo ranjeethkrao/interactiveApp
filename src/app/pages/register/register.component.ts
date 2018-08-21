@@ -68,6 +68,9 @@ export class RegisterComponent implements OnInit, AfterViewInit {
     public phoneVerified: boolean = false;
     currentUser: string = '';
 
+    @ViewChild('confPass') confPassEle: ElementRef;
+    recaptchaVerified: boolean = false;
+
     constructor(private reg: RegisterService, fb: FormBuilder, private router: Router) {
 
         this.tradersRegForm = fb.group({
@@ -291,8 +294,17 @@ export class RegisterComponent implements OnInit, AfterViewInit {
         firebase.auth().languageCode = 'en';
 
         this.windowRef = this.reg.windowRef;
+        let self = this;
         this.windowRef.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
-            'size': 'normal'
+            'size': 'normal',
+            'callback': function(response) {
+                self.recaptchaVerified = true;
+                self.confPassEle.nativeElement.focus(); //Required as an extra click is necessary to get back to the form
+              },
+              'expired-callback': function() {
+                self.recaptchaVerified = false;
+                swal('Oops...', 'reCAPTCHA expired. Please verify again!', 'error');
+              }
         });
         this.windowRef.recaptchaVerifier.render();
     }
