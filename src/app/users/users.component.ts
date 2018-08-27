@@ -33,9 +33,18 @@ export class UsersComponent implements OnInit {
   createColumnDefs() {
     return [
       { headerName: 'First Name', field: 'firstname' },
+      { headerName: 'Last Name', field: 'lastname' },
+      { headerName: 'Username', field: 'username' },
       { headerName: 'Email', field: 'email' },
-      { headerName: 'User ID', field: 'username' },
-      { headerName: 'Follows', field: 'follows', cellEditorFramework: ComboBoxComponent, editable: true }
+      { headerName: 'Phone', field: 'phone' },
+      { headerName: 'Follows', field: 'follows', cellEditorFramework: ComboBoxComponent, editable: true },
+      { headerName: 'User Type', field: 'userType' },
+      { headerName: 'Address Line1', field: 'addressLine1' },
+      { headerName: 'Address Line2', field: 'addressLine2' },
+      { headerName: 'City', field: 'city' },      
+      { headerName: 'Pincode', field: 'pincode' },
+      { headerName: 'State', field: 'state' },
+      { headerName: 'country', field: 'Country' }
     ];
   }
 
@@ -61,5 +70,9 @@ export class UsersComponent implements OnInit {
   valueChanged(event){
     this.changes.push({uuid: event.data.uuid, newValue: event.newValue});
   }
+
+  onFilterChanged(value){
+    this.gridOptions.api.setQuickFilter(value);
+   }
 
 }
