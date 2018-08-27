@@ -29,11 +29,12 @@ export class NavbarComponent implements OnInit {
             {path: 'historic', title: 'Historic', ab:'H'}
         ]
     }, {
-        path: '/users',
+        path: '/users/userManagement',
         title: 'User Management',
         type: 'link',
         icontype: 'people'
     }];
+    
     private listTitles: any[];
     location: Location;
     private nativeElement: Node;
