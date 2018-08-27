@@ -35,7 +35,6 @@ export class SidebarComponent implements OnInit {
     ROUTES: RouteInfo[] = [];
 
     constructor(private route: Router, private authService: AuthService) {
-        console.log('sidebar init')
         let user = JSON.parse(localStorage.getItem('user'));
         this.displayName = user.displayName || '';
         if(JSON.parse(localStorage.getItem('al')) === 3486){
