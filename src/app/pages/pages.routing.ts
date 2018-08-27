@@ -3,6 +3,7 @@ import { Routes } from '@angular/router';
 import { RegisterComponent } from './register/register.component';
 import { LoginComponent } from './login/login.component';
 import { VerifyComponent } from './verify/verify.component';
+import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 
 export const PagesRoutes: Routes = [
 
@@ -17,6 +18,9 @@ export const PagesRoutes: Routes = [
         }, {
             path: 'verify',
             component: VerifyComponent
+        }, {
+            path: 'resetPassword',
+            component: ForgotPasswordComponent
         }]
     }
 ];

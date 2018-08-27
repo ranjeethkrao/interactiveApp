@@ -16,6 +16,7 @@ import { LoginComponent } from './login/login.component';
 import { VerifyComponent } from './verify/verify.component';
 import { VerifyService } from './verify/verify.service';
 import { LoginService } from './login/login.service';
+import { ForgotPasswordComponent } from './forgot-password/forgot-password.component';
 
 
 @NgModule({
@@ -31,7 +32,8 @@ import { LoginService } from './login/login.service';
   declarations: [
     LoginComponent,
     RegisterComponent,
-    VerifyComponent
+    VerifyComponent,
+    ForgotPasswordComponent
   ],
   providers: [
     RegisterService,
