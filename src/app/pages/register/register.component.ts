@@ -9,7 +9,7 @@ import { RegisterService } from './register.service';
 import * as firebase from 'firebase';
 import swal from 'sweetalert2';
 import { Observable } from 'rxjs/Observable';
-import { environment } from '../../../environments/environment.prod';
+import { environment } from '../../../environments/environment';
 
 declare const $: any;
 
@@ -187,7 +187,7 @@ export class RegisterComponent implements OnInit, AfterViewInit {
                     }
                 },
                 phone: {
-                    required: true, 
+                    required: true,
                     // magnitudinisphone: true, 
                     remote: {
                         url: "/auth/isPhoneUnique",
@@ -297,14 +297,14 @@ export class RegisterComponent implements OnInit, AfterViewInit {
         let self = this;
         this.windowRef.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
             'size': 'normal',
-            'callback': function(response) {
+            'callback': function (response) {
                 self.recaptchaVerified = true;
                 self.confPassEle.nativeElement.focus(); //Required as an extra click is necessary to get back to the form
-              },
-              'expired-callback': function() {
+            },
+            'expired-callback': function () {
                 self.recaptchaVerified = false;
                 swal('Oops...', 'reCAPTCHA expired. Please verify again!', 'error');
-              }
+            }
         });
         this.windowRef.recaptchaVerifier.render();
     }
@@ -334,56 +334,50 @@ export class RegisterComponent implements OnInit, AfterViewInit {
         }
     }
 
-    sendEmail(values) {        
+    sendEmail(values) {
         const email = values['email'];
         const username = values['username'];
         const password = values['password'];
-        
-        
+
+
         // Create user in the firebase
         firebase.auth().createUserWithEmailAndPassword(email, password)
-          .then(createUser => {
-            if (createUser) {
-              //  Signin with user credentials
-              firebase.auth().signInWithEmailAndPassword(email, password)
-              .then( sign => {
-                if (sign) {
-                  const name = values['firstname'] + ' ' + values['lastname'];
-                  const user = firebase.auth().currentUser;
-                  let actionCodeSettings;
-                  if(environment.production){
-                    actionCodeSettings = {
-                        url: 'https://magnitudinis.herokuapp.com/#/verify?uid=' + firebase.auth().currentUser.uid + '&username=' + username
-                      };
-                  } else {
-                    actionCodeSettings = {
-                        url: 'http://localhost:3000/#/verify?uid=' + firebase.auth().currentUser.uid + '&username=' + username
-                      };
+            .then(createUser => {
+                if (createUser) {
+                    //  Signin with user credentials
+                    firebase.auth().signInWithEmailAndPassword(email, password)
+                        .then(sign => {
+                            if (sign) {
+                                const name = values['firstname'] + ' ' + values['lastname'];
+                                const user = firebase.auth().currentUser;
+                                let actionCodeSettings = {
+                                    url: environment.url + '/#/verify?uid=' + firebase.auth().currentUser.uid + '&username=' + username
+                                };
 
-                  }
-                  
-                  user.updateProfile({
-                    displayName: name,
-                    photoURL: ''
-                  })
-                  .then(() => {
-                    user.sendEmailVerification(actionCodeSettings)
-                    .then( result => {
-                    //   console.warn('succeed in Email Sent', user.emailVerified, result);
-                      this.registrationComplete = true;
-                    })
-                    .catch(err => swal(err.name, err.message, 'error'));
-                  })
-                  .catch(err => swal(err.name, err.message, 'error'));
+
+
+                                user.updateProfile({
+                                    displayName: name,
+                                    photoURL: ''
+                                })
+                                    .then(() => {
+                                        user.sendEmailVerification(actionCodeSettings)
+                                            .then(result => {
+                                                //   console.warn('succeed in Email Sent', user.emailVerified, result);
+                                                this.registrationComplete = true;
+                                            })
+                                            .catch(err => swal(err.name, err.message, 'error'));
+                                    })
+                                    .catch(err => swal(err.name, err.message, 'error'));
+                            }
+                        })
+                        .catch(err => swal(err.name, err.message, 'error'));
                 }
-              })
-              .catch(err => swal(err.name, err.message, 'error'));
-            }
-          })
-          .catch( err => {
-            swal(err.name, err.message, 'error');
-          });
-      }
+            })
+            .catch(err => {
+                swal(err.name, err.message, 'error');
+            });
+    }
 
 
     sendSMS(phone) {
@@ -413,7 +407,7 @@ export class RegisterComponent implements OnInit, AfterViewInit {
                     title: 'You have successfully registered with your phone number !'
                 });
                 self.phoneVerified = true;
-                self.reg.phoneVerified(this.currentUser).subscribe(data=>{});
+                self.reg.phoneVerified(this.currentUser).subscribe(data => { });
             })
             .catch((error) => {
                 swal({

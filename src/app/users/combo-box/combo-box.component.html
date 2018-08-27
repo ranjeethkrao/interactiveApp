@@ -1,0 +1,5 @@
+<mat-form-field>
+  <mat-select #mat multiple [(value)]="admins" (selectionChange)="onChange($event)">
+    <mat-option *ngFor="let user of users | async" [value]="user.firstName">{{user.firstName}}</mat-option>
+  </mat-select>
+</mat-form-field>

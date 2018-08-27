@@ -47,6 +47,11 @@ export class LoginComponent implements OnInit {
                         }).catch(function (error) {
                             swal('Invalid Token', 'Please re-login', 'error');
                         });
+                        if(user['userType'] === 'admin'){
+                            localStorage.setItem('al', '3486')    //Setting admin level - User is identified as admin if value is 3486
+                        } else {
+                            localStorage.setItem('al', Math.floor((Math.random() * 999) + 1).toString());   //To create randomness preventing hack.
+                        }
                         localStorage.setItem('user', JSON.stringify(res));
                         this.loginService.login();
                         this.router.navigate(['/dashboard']);

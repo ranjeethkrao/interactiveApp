@@ -1,7 +1,5 @@
-import { Component, OnInit, Renderer, ViewChild, ElementRef, Directive } from '@angular/core';
-import { ROUTES } from '../.././sidebar/sidebar.component';
-import { Router, ActivatedRoute } from '@angular/router';
-import { Location, LocationStrategy, PathLocationStrategy } from '@angular/common';
+import { Component, OnInit, Renderer, ViewChild, ElementRef } from '@angular/core';
+import { Location } from '@angular/common';
 const misc: any = {
     navbar_menu_visible: 0,
     active_collapse: true,
@@ -15,6 +13,27 @@ declare var $: any;
 })
 
 export class NavbarComponent implements OnInit {
+
+    ROUTES = [{
+        path: '/dashboard',
+        title: 'Dashboard',
+        type: 'link',
+        icontype: 'dashboard'
+    }, {
+        path: '/feed',
+        title: 'Feeds',
+        type: 'sub',
+        icontype: 'timeline',
+        children: [
+            {path: 'live', title: 'Live', ab:'L'},
+            {path: 'historic', title: 'Historic', ab:'H'}
+        ]
+    }, {
+        path: '/users',
+        title: 'User Management',
+        type: 'link',
+        icontype: 'people'
+    }];
     private listTitles: any[];
     location: Location;
     private nativeElement: Node;
@@ -30,7 +49,7 @@ export class NavbarComponent implements OnInit {
     }
 
     ngOnInit() {
-        this.listTitles = ROUTES.filter(listTitle => listTitle);
+        this.listTitles = this.ROUTES.filter(listTitle => listTitle);
 
         const navbar: HTMLElement = this.element.nativeElement;
         this.toggleButton = navbar.getElementsByClassName('navbar-toggle')[0];

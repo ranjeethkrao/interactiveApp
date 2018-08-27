@@ -5,20 +5,20 @@ import { BehaviorSubject } from 'rxjs';
 @Injectable()
 export class AuthService {
 
-  private loggedIn = new BehaviorSubject<boolean>(this.isTokenPresent());
+  constructor() {}
 
+  private loggedIn = new BehaviorSubject<boolean>(this.isTokenPresent());
+  
   get isLoggedIn() {
     return this.loggedIn.asObservable();
   }
-
-  constructor() {}
 
   isTokenPresent(){
     return !!localStorage.getItem('user');
   }
 
   login(){
-    this.loggedIn.next(true); 
+    this.loggedIn.next(true);
   }
 
   logout() {

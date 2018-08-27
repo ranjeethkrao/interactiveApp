@@ -23,22 +23,7 @@ export interface ChildrenItems {
 }
 
 //Menu Items
-export const ROUTES: RouteInfo[] = [{
-        path: '/dashboard',
-        title: 'Dashboard',
-        type: 'link',
-        icontype: 'dashboard'
-    },{
-        path: '/feed',
-        title: 'Feeds',
-        type: 'sub',
-        icontype: 'timeline',
-        children: [
-            {path: 'live', title: 'Live', ab:'L'},
-            {path: 'historic', title: 'Historic', ab:'H'}
-        ]
-    }
-];
+// export let ROUTES: RouteInfo[] = [];
 @Component({
     selector: 'app-sidebar-cmp',
     templateUrl: 'sidebar.component.html',
@@ -47,10 +32,50 @@ export const ROUTES: RouteInfo[] = [{
 export class SidebarComponent implements OnInit {
     public menuItems: any[];
     displayName: '';
+    ROUTES: RouteInfo[] = [];
 
     constructor(private route: Router, private authService: AuthService) {
+        console.log('sidebar init')
         let user = JSON.parse(localStorage.getItem('user'));
         this.displayName = user.displayName || '';
+        if(JSON.parse(localStorage.getItem('al')) === 3486){
+            this.ROUTES = [{
+                path: '/dashboard',
+                title: 'Dashboard',
+                type: 'link',
+                icontype: 'dashboard'
+            },{
+                path: '/feed',
+                title: 'Feeds',
+                type: 'sub',
+                icontype: 'timeline',
+                children: [
+                    {path: 'live', title: 'Live', ab:'L'},
+                    {path: 'historic', title: 'Historic', ab:'H'}
+                ]
+            },{
+                path: '/users/userManagement',
+                title: 'Users',
+                type: 'link',
+                icontype: 'people'
+            }];
+        } else {
+            this.ROUTES = [{
+                path: '/dashboard',
+                title: 'Dashboard',
+                type: 'link',
+                icontype: 'dashboard'
+            },{
+                path: '/feed',
+                title: 'Feeds',
+                type: 'sub',
+                icontype: 'timeline',
+                children: [
+                    {path: 'live', title: 'Live', ab:'L'},
+                    {path: 'historic', title: 'Historic', ab:'H'}
+                ]
+            }];
+        }
     }
 
     isNotMobileMenu() {
@@ -72,7 +97,7 @@ export class SidebarComponent implements OnInit {
         } else {
             $('html').addClass('perfect-scrollbar-off');
         }
-        this.menuItems = ROUTES.filter(menuItem => menuItem);
+        this.menuItems = this.ROUTES.filter(menuItem => menuItem);
     }
 
     logout(){

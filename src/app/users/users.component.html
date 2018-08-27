@@ -1,0 +1,21 @@
+<div class="main-content">
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-header card-header-icon" data-background-color="purple">
+                <i class="material-icons">face</i>
+            </div>
+            <div class="card-content">
+                <h4 class="card-title">User Data</h4>
+                <div class="row">
+                    <div class="col-md-12">
+                        <ag-grid-angular style="width: 65%; height: 200px;" class="ag-dark" [gridOptions]="gridOptions" (cellValueChanged)="valueChanged($event)">
+                        </ag-grid-angular>
+                    </div>
+                    <div class="col-md-12">
+                        <button class="btn btn-success" (click)="saveData()">Save Data</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -14,10 +14,12 @@ import { FooterModule } from './shared/footer/footer.module';
 import { NavbarModule} from './shared/navbar/navbar.module';
 import { AdminLayoutComponent } from './layouts/admin/admin-layout.component';
 import { AuthLayoutComponent } from './layouts/auth/auth-layout.component';
+import { UsersModule } from './users/users.module';
 
 import { AppRoutes } from './app.routing';
 import { AuthService } from './services/auth.service';
 import { AuthGuard } from './services/auth.guard';
+import { AdminGuard } from './services/admin.guard';
 
 firebase.initializeApp(fb.firebase);
 
@@ -30,7 +32,8 @@ firebase.initializeApp(fb.firebase);
         HttpModule,
         SidebarModule,
         NavbarModule,
-        FooterModule    
+        FooterModule,
+        UsersModule
     ],
     declarations: [
         AppComponent,
@@ -39,7 +42,8 @@ firebase.initializeApp(fb.firebase);
     ],
     providers: [
         AuthService,
-        AuthGuard
+        AuthGuard,
+        AdminGuard
       ],
     bootstrap:[ 
         AppComponent 
