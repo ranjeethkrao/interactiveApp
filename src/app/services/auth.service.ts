@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
+import * as firebase from 'firebase';
+import swal from 'sweetalert2';
 
 
 @Injectable()
@@ -22,6 +24,11 @@ export class AuthService {
   }
 
   logout() {
+    firebase.auth().signOut().then(function() {
+      swal('Logged out', 'You have been successfully logged out', 'info');
+    }).catch(function(error) {
+      console.log(error);
+    });
     this.loggedIn.next(false);
     localStorage.clear();
   }

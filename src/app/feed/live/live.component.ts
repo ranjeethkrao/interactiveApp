@@ -66,7 +66,7 @@ export class LiveComponent implements OnInit, OnDestroy {
       { headerName: 'Symbol', field: 'Symbol' },
       { headerName: 'Trade', field: 'Trade' },
       { headerName: 'Price', field: 'Price' },
-      { headerName: 'Timestamp', field: 'Date', cellRenderer:'agAnimateShowChangeCellRenderer', comparator: dateComparator, sort: 'desc' }
+      { headerName: 'Timestamp', field: 'Date', cellRenderer:'agAnimateShowChangeCellRenderer', comparator: dateComparator, sort: 'desc', suppressSorting: false}
     ];
     this.liveGridOptions.rowData = [];
 
@@ -179,6 +179,22 @@ export class LiveComponent implements OnInit, OnDestroy {
 
   setSelected(){
     this.hs.setSelectedItems(JSON.parse(localStorage.getItem('user')).email, {exchange: this.exchangeSelectionItems, symbols: this.symbolSelectedItems}).subscribe(res => {});
+  }
+
+
+  deleteRows(){
+    let deletionSymbols = this.liveGridApi.getSelectedNodes().map(node=>node.data.Symbol);
+    let diff = this.symbolSelectedItems.filter(selectedItem => {
+      if(deletionSymbols.indexOf(selectedItem.itemName) === -1){
+        return selectedItem;
+      }
+    })
+    console.log(diff)
+    this.symbolSelectedItems = diff;
+    this.rowData = this.symbolSelectedItems.map(symbol=>symbol.data);
+    this.liveGridOptions.api.setRowData(this.rowData);
+    this.setSelected();
+    
   }
 
   ngOnDestroy(){
