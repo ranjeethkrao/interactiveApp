@@ -193,6 +193,7 @@ export class LiveComponent implements OnInit, OnDestroy {
     this.symbolSelectedItems = diff;
     this.rowData = this.symbolSelectedItems.map(symbol=>symbol.data);
     this.liveGridOptions.api.setRowData(this.rowData);
+    this.setSelected();
     
   }
 
