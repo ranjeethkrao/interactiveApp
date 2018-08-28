@@ -99,36 +99,6 @@ export class VerifyComponent implements OnInit, AfterViewInit {
       }
   }
 
-
-  // verifyOtpService(code){
-
-  //   return new Promise((resolve, reject) => {
-  //       this.windowRef.confirmationResult.confirm(code)
-  //       .then((result) => {
-  //           resolve(result);
-  //       })
-  //       .catch((error) => {
-  //           reject(error);
-  //       })
-  //   });
-
-  // }
-
-  // verifyOtp(code){
-  //   this.verifyOtpService(code)
-  //       .then((result) => {
-  //         console.log(result);
-  //       })
-  //       .catch((error) => {
-  //         console.log(error)
-  //         swal(
-  //           'Oops...',
-  //           error.message,
-  //           'error'
-  //       )
-  //       })
-  // }
-
   verifyOtp(code) {
     let self = this;
     this.windowRef.confirmationResult.confirm(code)
