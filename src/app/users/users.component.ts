@@ -3,6 +3,7 @@ import { Http, Headers } from '@angular/http';
 import { GridOptions } from 'ag-grid';
 import { ComboBoxComponent } from './combo-box/combo-box.component';
 import { environment } from '../../environments/environment';
+import swal from 'sweetalert2';
 
 @Component({
   selector: 'mg-users',
@@ -12,9 +13,13 @@ export class UsersComponent implements OnInit {
 
   admins = [];
   changes = [];
+  frameworkComponents = {
+    comboBoxComponent: ComboBoxComponent
+  };
+
   rowData;
   gridOptions: GridOptions;
-  constructor(private http: Http) {
+  constructor(private http: Http) {    
     this.gridOptions = <GridOptions>{
       columnDefs: this.createColumnDefs(),
       onGridSizeChanged: () => {
@@ -36,8 +41,8 @@ export class UsersComponent implements OnInit {
       { headerName: 'Last Name', field: 'lastname' },
       { headerName: 'Username', field: 'username' },
       { headerName: 'Email', field: 'email' },
-      { headerName: 'Phone', field: 'phone' },
-      { headerName: 'Follows', field: 'follows', cellEditorFramework: ComboBoxComponent, editable: true },
+      { headerName: 'Phone', field: 'phone'},
+      { headerName: 'Follows', field: 'follows', cellEditor: 'comboBoxComponent', editable: true},
       { headerName: 'User Type', field: 'userType' },
       { headerName: 'Address Line1', field: 'addressLine1' },
       { headerName: 'Address Line2', field: 'addressLine2' },
@@ -55,15 +60,15 @@ export class UsersComponent implements OnInit {
       this.http.post(environment.url + '/user/changes', {changes:this.changes}, {headers: headers}).subscribe(res=>{
         let response = JSON.parse(res['_body']);
         if(response['code'] === 0){
-          alert('Save successful');
+          swal('Success', 'Changes have been saved successfully', 'success');
         } else {
-          alert('Error: ' + response['message']);
+          swal('Error',response['message'], 'error');
         }
       });
       this.changes = [];
 
     } else {
-      alert('Nothing to save...');
+      swal('Nothing to save...', '', 'info');
     }
   }
 

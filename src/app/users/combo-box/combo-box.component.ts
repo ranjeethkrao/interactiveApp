@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, ViewChild, ViewContainerRef } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { DataService } from './data.service';
 import { ICellEditorAngularComp } from 'ag-grid-angular';
 
@@ -7,23 +7,17 @@ import { ICellEditorAngularComp } from 'ag-grid-angular';
   templateUrl: './combo-box.component.html',
   styleUrls: ['./combo-box.component.css']
 })
-export class ComboBoxComponent implements OnInit, ICellEditorAngularComp, AfterViewInit {
+export class ComboBoxComponent implements OnInit, ICellEditorAngularComp {
 
-  @ViewChild('mat', {read: ViewContainerRef}) public mat;
+  @ViewChild('mat') mat;
   users: any = [];
   admins: any = [];
 
   constructor(private dataservice: DataService) {}
 
   ngOnInit() {
-    this.users = this.dataservice.getAdminUsers();
+    this.users = this.dataservice.getAdminUsers();    
   }
-
-  ngAfterViewInit() {
-    setTimeout(() => {
-        this.mat.element.nativeElement.focus();
-    })
-}
 
   refresh(params: any): boolean {
     return false;
@@ -31,9 +25,9 @@ export class ComboBoxComponent implements OnInit, ICellEditorAngularComp, AfterV
 
   public params: any;
 
-  agInit(params: any): void {
+  agInit(params: any): void {    
       this.params = params;
-      this.admins = this.params.value;
+      this.admins = this.params.value;    
   }
 
   isPopup(): boolean {
@@ -43,9 +37,4 @@ export class ComboBoxComponent implements OnInit, ICellEditorAngularComp, AfterV
   public getValue(){
     return this.admins;
   }
-
-  onChange(evt){
-    this.admins = evt.value;
-  }
-
 }
