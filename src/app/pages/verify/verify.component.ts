@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit } from '@angular/core';
+import { Component, OnInit, AfterViewInit, Renderer2, ViewChild, ElementRef } from '@angular/core';
 import { RegisterService } from '../register/register.service';
 import { Router, ActivatedRoute } from '../../../../node_modules/@angular/router';
 import * as firebase from 'firebase';
@@ -12,6 +12,8 @@ import swal from 'sweetalert2';
 })
 export class VerifyComponent implements OnInit, AfterViewInit {
 
+  @ViewChild('recaptchaDiv') recaptchaDiv:ElementRef;
+
   windowRef: any;
   user: any = {};
   phoneVerified: boolean = false;
@@ -21,7 +23,7 @@ export class VerifyComponent implements OnInit, AfterViewInit {
   phone: string = '';
   test: Date = new Date();
 
-  constructor(private reg: RegisterService, private router: Router, private verifyService: VerifyService, private route: ActivatedRoute) { }
+  constructor(private reg: RegisterService, private router: Router, private verifyService: VerifyService, private route: ActivatedRoute, private renderer:Renderer2) { }
 
   ngOnInit() {
     let username = this.reg.getCurrentUser();
@@ -64,12 +66,17 @@ export class VerifyComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit() {
     if (!this.phoneVerified) {
-      this.windowRef = this.reg.windowRef;
-      this.windowRef.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
-        'size': 'normal'
-      });
-      this.windowRef.recaptchaVerifier.render();
+      this.renderRecaptcha();
     }
+  }
+
+  renderRecaptcha() {
+    this.windowRef = this.reg.windowRef;
+    console.log(this.windowRef.recaptchaVerifier);
+    this.windowRef.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+      'size': 'normal'
+    });
+    this.windowRef.recaptchaVerifier.render();
   }
 
   gotoLogin() {
@@ -77,7 +84,7 @@ export class VerifyComponent implements OnInit, AfterViewInit {
   }
 
   resendOtp() {
-    if(this.phone.length === 0){
+    if (this.phone.length === 0) {
       swal('Oops', 'There was a problem fetching your mobile number', 'error');
     } else {
       const appVerifier = this.windowRef.recaptchaVerifier;
@@ -96,7 +103,7 @@ export class VerifyComponent implements OnInit, AfterViewInit {
             'error'
           )
         });
-      }
+    }
   }
 
   verifyOtp(code) {
@@ -119,5 +126,13 @@ export class VerifyComponent implements OnInit, AfterViewInit {
           title: 'Could not register with the provided phone number !'
         });
       })
+  }
+
+  reSend(){
+    
+    this.windowRef.recaptchaVerifier.clear();
+    this.renderRecaptcha();
+    this.smsSent = false;
+    // window.location.reload();
   }
 }

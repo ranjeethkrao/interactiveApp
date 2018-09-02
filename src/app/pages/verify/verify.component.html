@@ -46,8 +46,8 @@
 
                                 <!-- Phone not verified -->
                                 <div *ngIf="!phoneVerified">
-                                    <div *ngIf="!smsSent">
-                                        <div class="wizard-header">
+                                    <div [hidden]="smsSent">
+                                        <div class="wizard-header" #recaptchaDiv>
                                             <h3 class="wizard-title">You have to verify your phone number to complete the registration process!</h3>
                                             <h3 class="wizard-title">Click here to send OTP.</h3>
                                             <div id="recaptcha-container"></div>
@@ -55,7 +55,7 @@
                                         </div>
 
                                     </div>
-                                    <div *ngIf="smsSent" class="row">
+                                    <div [hidden]="!smsSent" class="row">
                                         <div class="wizard-header">
                                             <h3 class="wizard-title">
                                                 We just sent you a message!
@@ -69,8 +69,8 @@
                                                     <label class="control-label">Verification Code</label>
                                                     <input type="number" class="form-control" name="verificationCode" id="verificationCode" #vc>
                                                     <div style="text-align: center">
-                                                        <input type='button' class='btn btn-fill btn-rose btn-wd' name='verify' value='Verify' (click)="verifyOtp(vc.value)" />
-                                                        <input type="button" class="btn btn-fill btn-rose btn-wd" name='resendOtp' value="Resend OTP" (click)="smsSent=false" />
+                                                        <input type='button' class='btn btn-fill btn-rose btn-wd' name='verify' value='Verify' [disabled]="vc.value.length < 4" (click)="verifyOtp(vc.value)" />
+                                                        <input type="button" class="btn btn-fill btn-rose btn-wd" name='resendOtp' value="Resend OTP" (click)="reSend()" />
                                                     </div>
                                                 </div>
                                             </div>
