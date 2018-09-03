@@ -104,7 +104,7 @@ export class LiveComponent implements OnInit, OnDestroy {
       this.exchangeSelectionItems = data.exchange;
       this.symbolSelectedItems = data.symbols;
       this.onExchangeItemSelect(null);
-      this.onSymbolItemSelect(null);      
+      this.onSymbolItemSelect(null);
     })
   }
 
@@ -178,7 +178,9 @@ export class LiveComponent implements OnInit, OnDestroy {
   }
 
   setSelected(){
-    this.hs.setSelectedItems(JSON.parse(localStorage.getItem('user')).email, {exchange: this.exchangeSelectionItems, symbols: this.symbolSelectedItems}).subscribe(res => {});
+    let exchange = this.exchangeSelectionItems.map(item => item.itemName);
+    let symbols = this.symbolSelectedItems.map(item => item.itemName);
+    this.hs.setSelectedItems(JSON.parse(localStorage.getItem('user')).email, {exchange: exchange, symbols: symbols}).subscribe(res => {});
   }
 
 

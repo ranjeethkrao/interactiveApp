@@ -62,8 +62,35 @@ router.get('/getSelectedItems/:email', (req, res) => {
                         items.symbols = temp.symbols || [];
                     }
                 })
-                callback(items);
+                callback(null, items);
             });
+        }, function(userSelected, callback){
+            let exchanges = [];
+            let symbols = [];
+            firebaseDB.ref(firebasePath).once('value', (snapshot) => {
+                if (snapshot.val()) {
+                    //Build Exchange
+                    let uniqueExchanges = [...new Set(snapshot.val().map(item => item.Exchange))];
+                    uniqueExchanges.forEach((exchange, index) => {
+                        if(userSelected.exchange.includes(exchange))
+                            exchanges.push({ id: index, itemName: exchange })
+                    });
+                    //Build Symbols
+                    let dataset = snapshot.val();
+                    userSelected.symbols.forEach((symbol, index) => {
+                        symbols.push({
+                            id: index,
+                            itemName: symbol,
+                            data: dataset.filter(sym => sym.Symbol === symbol)[0]
+                        });
+                    })
+
+
+                    callback({exchange: exchanges, symbols: symbols});
+                } else {
+                    callback({exchange: exchanges, symbols: symbols});
+                }
+            });            
         }
     ], function (result, err) {
         res.send(result)
