@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FeedService } from '../feed.service';
 import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import { GridOptions, ColumnApi, GridApi } from 'ag-grid';
-import { FirebaseListObservable } from 'angularfire2/database';
+import { LoaderService } from '../../shared/loader.service';
 
 @Component({
   selector: 'mg-live',
@@ -32,7 +32,7 @@ export class LiveComponent implements OnInit, OnDestroy {
 
   public timer;
 
-  constructor(fb: FormBuilder, private hs: FeedService) {
+  constructor(fb: FormBuilder, private hs: FeedService, private loaderService: LoaderService) {
 
     this.form = fb.group({
       'symbol': ['', Validators.compose([Validators.required])],
@@ -90,7 +90,9 @@ export class LiveComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
+    this.loaderService.display(true);
     this.hs.fetchAllExchange().subscribe((data) => {
+      
       this.exchangeOptions = [];
       for (let obj of data) {
         this.exchangeOptions.push({
@@ -106,6 +108,8 @@ export class LiveComponent implements OnInit, OnDestroy {
       this.onExchangeItemSelect(null);
       this.onSymbolItemSelect(null);
     })
+
+    this.loaderService.display(false);
   }
 
   onGridReady(params){

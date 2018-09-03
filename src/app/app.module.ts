@@ -20,6 +20,7 @@ import { AppRoutes } from './app.routing';
 import { AuthService } from './services/auth.service';
 import { AuthGuard } from './services/auth.guard';
 import { AdminGuard } from './services/admin.guard';
+import { LoaderService } from './shared/loader.service';
 
 firebase.initializeApp(fb.firebase);
 
@@ -43,7 +44,8 @@ firebase.initializeApp(fb.firebase);
     providers: [
         AuthService,
         AuthGuard,
-        AdminGuard
+        AdminGuard,
+        LoaderService
       ],
     bootstrap:[ 
         AppComponent 
