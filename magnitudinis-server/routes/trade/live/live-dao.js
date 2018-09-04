@@ -31,10 +31,11 @@ router.get('/getDistinctSymbol', (req, res) => {
     if (queryParams) {
         exchanges = queryParams.split(',');
         firebaseDB.ref(firebasePath).once('value', (snapshot) => {
-            exchanges.forEach(exchange => {
+            let index = 0;
+            exchanges.forEach((exchange) => {
                 list = [...new Set(snapshot.val().filter(data => data.Exchange === exchange))];
-                list.forEach((element, index) => {
-                    responseObject.push({ ID: index, VALUE: element })
+                list.forEach(element => {
+                    responseObject.push({ ID: index++, VALUE: element })
                 });
             })
             return res.send(responseObject);

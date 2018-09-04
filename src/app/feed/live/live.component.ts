@@ -118,32 +118,72 @@ export class LiveComponent implements OnInit, OnDestroy {
     params.api.sizeColumnsToFit();
   }
 
+  onGridChange(params){
+    this.liveGridApi.sizeColumnsToFit();
+    
+  }
+
   onExchangeItemSelect(item) {
+
+    this.hs.fetchDistinctSymbol(this.exchangeSelectionItems.map(item=>item['itemName'])).subscribe((data) => {
+      this.symbolOptions = [];
+      for (let obj of data) {
+        this.symbolOptions.push({
+          id: obj['ID'],
+          data: obj['VALUE'],
+          itemName: obj['VALUE']['Symbol']
+        });
+      }
+    });
+  }
+
+  onExchangeItemDeselect(item){
     if(this.exchangeSelectionItems.length === 0){
       this.symbol.reset();
       this.symbolOptions.length = 0;
       this.liveGridOptions.api.setRowData([])
       clearTimeout(this.timer);
+      this.setSelected();
     } else {
-      this.hs.fetchDistinctSymbol(this.exchangeSelectionItems.map(item=>item['itemName'])).subscribe((data) => {
-        // if(item)     // A null means that selection is not from grid
-        //   this.symbol.reset();
-        this.symbolOptions = [];
-        for (let obj of data) {
-          this.symbolOptions.push({
-            id: obj['ID'],
-            data: obj['VALUE'],
-            itemName: obj['VALUE']['Symbol']
-          });
-        }
-      });
+      let exchangeList = this.exchangeSelectionItems.map(item => item.itemName);
+      let newSymbolList = this.symbolSelectedItems.filter(item => {
+        if(exchangeList.includes(item.data.Exchange))
+          return item;
+      })
+      this.symbolSelectedItems = newSymbolList;
+
+      let newSymbolOptionsList = this.symbolOptions.filter(item => {
+        if(exchangeList.includes(item.data.Exchange))
+          return item;
+      })
+      this.symbolOptions = newSymbolOptionsList;
+
+
+      this.rowData = this.symbolSelectedItems.map(symbol=>symbol.data);
+      this.liveGridOptions.api.setRowData(this.rowData);
+      this.setSelected();
     }
+
+  }
+
+  onExchangeItemDeselectAll(item){
+      this.symbol.reset();
+      this.symbolOptions.length = 0;
+      this.liveGridOptions.api.setRowData([])
+      clearTimeout(this.timer);
+      this.exchangeSelectionItems.length = 0;
+      this.symbolSelectedItems.length = 0;
+      this.setSelected();
   }
 
   onSymbolItemSelect(item) {
+    console.log(this.symbolSelectedItems.length);
+    
     if(item)
       this.setSelected();   // A null means that selection is not from grid
     this.rowData = this.symbolSelectedItems.map(symbol=>symbol.data);
+    console.log(this.rowData.length);
+    
     this.liveGridOptions.api.setRowData(this.rowData);
     clearTimeout(this.timer);
     if(this.symbolSelectedItems.length > 0){
@@ -171,19 +211,21 @@ export class LiveComponent implements OnInit, OnDestroy {
             rowNodes.push(node);
           }
         })
-      });
+      });      
+      
       
       gridApi.flashCells({ rowNodes: rowNodes });
       gridApi.updateRowData({ update: itemsToUpdate });
 
       
     });
-    this.timer = setTimeout(this.timeoutTarget.bind(this), 1000, gridApi);
+    this.timer = setTimeout(this.timeoutTarget.bind(this), 2000, gridApi);
   }
 
   setSelected(){
     let exchange = this.exchangeSelectionItems.map(item => item.itemName);
     let symbols = this.symbolSelectedItems.map(item => item.itemName);
+    
     this.hs.setSelectedItems(JSON.parse(localStorage.getItem('user')).email, {exchange: exchange, symbols: symbols}).subscribe(res => {});
   }
 
@@ -197,6 +239,7 @@ export class LiveComponent implements OnInit, OnDestroy {
     })
 
     this.symbolSelectedItems = diff;
+    console.log(this.symbolSelectedItems);    
     this.rowData = this.symbolSelectedItems.map(symbol=>symbol.data);
     this.liveGridOptions.api.setRowData(this.rowData);
     this.setSelected();

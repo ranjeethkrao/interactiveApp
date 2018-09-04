@@ -14,9 +14,9 @@
                                             [(ngModel)]="exchangeSelectionItems"
                                             [settings]="exchangeDropdownSettings" 
                                             (onSelect)="onExchangeItemSelect($event)"
-                                            (onDeSelect)="onExchangeItemSelect($event)"
+                                            (onDeSelect)="onExchangeItemDeselect($event)"
                                             (onSelectAll)="onExchangeItemSelect($event)" 
-                                            (onDeSelectAll)="onExchangeItemSelect($event)">
+                                            (onDeSelectAll)="onExchangeItemDeelectAll($event)">
                                         </angular2-multiselect>
                                     </div>
                                 </div>
@@ -37,34 +37,28 @@
                             </div>
                         </div>
                     </form>
-                </div>
-            </div>   
-        </div>
-        <div class="card">
-            <div class="card-header card-header-icon" data-background-color="rose">
-                <i class="material-icons">apps</i>
-            </div>
-            <div class="card-content">
-                <h4 class="card-title">Live Data</h4>
-                <div class="row">
-                    <button class="btn btn-rose pull-right right-align" (click)="deleteRows()">Delete Selected Rows</button>
-                    <div class="col-md-12">
-                        <ag-grid-angular #agGrid
-                            class="ag-dark"
-                            style="width: 100%; height:48vh;"
-                            [gridOptions]="liveGridOptions"
-                            [rowData]="rowData"
-                            (gridReady)="onGridReady($event)"                            
-                            accentedSort="true"
-                            rowSelection="multiple"
-                            rowHeight="22"
-                            enableCellChangeFlash="true"
-                            animateRows="true">
-                        </ag-grid-angular>
+                    <div class="card-content">
+                        <div class="row">
+                            <button class="btn btn-rose pull-right right-align" (click)="deleteRows()">Delete Selected Rows</button>
+                            <div class="col-md-12">
+                                <ag-grid-angular #agGrid
+                                    class="ag-dark"
+                                    style="width: 100%; height:51vh;"
+                                    [gridOptions]="liveGridOptions"
+                                    [rowData]="rowData"
+                                    (gridReady)="onGridReady($event)"
+                                    (gridSizeChanged)="onGridChange($event)"
+                                    rowSelection="multiple"
+                                    rowHeight="22"
+                                    enableCellChangeFlash="true"
+                                    animateRows="true">
+                                </ag-grid-angular>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
+            </div>   
+        </div>        
     </div>
 </div>
 

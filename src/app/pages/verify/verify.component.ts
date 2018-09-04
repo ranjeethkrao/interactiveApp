@@ -72,7 +72,6 @@ export class VerifyComponent implements OnInit, AfterViewInit {
 
   renderRecaptcha() {
     this.windowRef = this.reg.windowRef;
-    console.log(this.windowRef.recaptchaVerifier);
     this.windowRef.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
       'size': 'normal'
     });
