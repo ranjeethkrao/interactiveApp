@@ -16,7 +16,8 @@
                                             (onSelect)="onExchangeItemSelect($event)"
                                             (onDeSelect)="onExchangeItemDeselect($event)"
                                             (onSelectAll)="onExchangeItemSelect($event)" 
-                                            (onDeSelectAll)="onExchangeItemDeelectAll($event)">
+                                            (onDeSelectAll)="onExchangeItemDeselectAll($event)"
+                                        >
                                         </angular2-multiselect>
                                     </div>
                                 </div>
@@ -30,7 +31,9 @@
                                             (onSelect)="onSymbolItemSelect($event)"
                                             (onDeSelect)="onSymbolItemSelect($event)"
                                             (onSelectAll)="onSymbolItemSelect($event)" 
-                                            (onDeSelectAll)="onSymbolItemSelect($event)">
+                                            (onDeSelectAll)="onSymbolItemSelect($event)"
+                                            labelKey="Exchange"
+                                            primaryKey="Symbol">
                                         </angular2-multiselect>
                                     </div>
                                 </div>
