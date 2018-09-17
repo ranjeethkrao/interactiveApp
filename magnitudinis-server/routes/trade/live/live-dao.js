@@ -5,7 +5,6 @@ const firebaseDB = api.getFirebaseDB();
 const firebasePath = '/status/result/1/data';
 const async = require('async');
 liveTradeData = {};
-exchangeDataMap = {};
 index = 0;
 
 firebaseDB.ref(firebasePath).on("child_changed", (snapshot) => {
@@ -33,21 +32,16 @@ router.get('/getDistinctSymbol', (req, res) => {
     if (queryParams) {
         exchanges = [...new Set(queryParams.split(','))];
         exchanges.forEach(exchange => {
-            if (exchangeDataMap[exchange]) {
-                console.log('if', exchangeDataMap[exchange].length)
-                responseObject = responseObject.concat(exchangeDataMap[exchange])
-            } else {
+            
                 firebaseDB.ref(firebasePath).once('value', (snapshot) => {
                     list = [...new Set(snapshot.val().filter(data => data.Exchange === exchange))];
                     let dataSet = [];
                     list.forEach(element => {
                         dataSet.push({ ID: index++, VALUE: element });
                     });
-                    exchangeDataMap[exchange] = dataSet;
-                    console.log('else', exchangeDataMap[exchange].length)
                     responseObject = responseObject.concat(dataSet);
                 });
-            }
+            
         })
         // console.log('responseObject', responseObject);
         
