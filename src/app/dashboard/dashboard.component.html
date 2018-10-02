@@ -1,6 +1,6 @@
 <div class="main-content">
     <div class="container-fluid">
-        <div class="row">
+        <!-- <div class="row">
             <div class="col-lg-3 col-md-6 col-sm-6">
                 <div class="card card-stats">
                     <div class="card-header" data-background-color="orange">
@@ -78,9 +78,9 @@
                         <h4 class="card-title">News Feeds</h4>
                         <ul class="timeline timeline-simple">
                             <li class="timeline-inverted">
-                                <!-- <div class="timeline-badge danger">
+                                <div class="timeline-badge danger">
                                     <i class="material-icons">card_travel</i>
-                                </div> -->
+                                </div>
                                 <div class="timeline-panel">
                                     <div class="timeline-heading">
                                         <span class="label label-danger">Some title</span>
@@ -94,9 +94,9 @@
                                 </div>
                             </li>
                             <li class="timeline-inverted">
-                                <!-- <div class="timeline-badge success">
+                                <div class="timeline-badge success">
                                     <i class="material-icons">extension</i>
-                                </div> -->
+                                </div>
                                 <div class="timeline-panel">
                                     <div class="timeline-heading">
                                         <span class="label label-success">Another One</span>
@@ -107,9 +107,9 @@
                                 </div>
                             </li>
                             <li class="timeline-inverted">
-                                <!-- <div class="timeline-badge info">
+                                <div class="timeline-badge info">
                                     <i class="material-icons">fingerprint</i>
-                                </div> -->
+                                </div>
                                 <div class="timeline-panel">
                                     <div class="timeline-heading">
                                         <span class="label label-info">Another Title</span>
@@ -230,9 +230,11 @@
                     </div>
                 </div>
             </div>
+        </div> -->
+
+
+        <div class="row" *ngFor="let item of tweets">
+            <span >{{item.tweet}} - {{item.time}} - {{item.time | timeAgo}}</span>
         </div>
-
-
-
     </div>
 </div>
