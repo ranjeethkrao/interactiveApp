@@ -5,6 +5,7 @@ const firebaseDB = api.getFirebaseDB();
 const firebasePath = '/status/result/1/data';
 const async = require('async');
 liveTradeData = {};
+index = 0;
 
 firebaseDB.ref(firebasePath).on("child_changed", (snapshot) => {
     liveTradeData[snapshot.ref.key] = snapshot.val();
@@ -29,17 +30,39 @@ router.get('/getDistinctSymbol', (req, res) => {
     responseObject = [];
     queryParams = req.query['exchange'];
     if (queryParams) {
-        exchanges = queryParams.split(',');
-        firebaseDB.ref(firebasePath).once('value', (snapshot) => {
-            let index = 0;
-            exchanges.forEach((exchange) => {
-                list = [...new Set(snapshot.val().filter(data => data.Exchange === exchange))];
-                list.forEach(element => {
-                    responseObject.push({ ID: index++, VALUE: element })
+        exchanges = [...new Set(queryParams.split(','))];
+        exchanges.forEach(exchange => {
+            
+                firebaseDB.ref(firebasePath).once('value', (snapshot) => {
+                    list = [...new Set(snapshot.val().filter(data => data.Exchange === exchange))];
+                    let dataSet = [];
+                    list.forEach(element => {
+                        dataSet.push({ ID: index++, VALUE: element });
+                    });
+                    responseObject = responseObject.concat(dataSet);
                 });
-            })
-            return res.send(responseObject);
-        });
+            
+        })
+        // console.log('responseObject', responseObject);
+        
+        return res.send(responseObject);
+
+        // firebaseDB.ref(firebasePath).once('value', (snapshot) => {
+        //     let index = 0;
+        //     exchanges.forEach((exchange) => {
+        //         list = [...new Set(snapshot.val().filter(data => data.Exchange === exchange))];
+        //         let dataSet = [];
+        //         list.forEach(element => {
+        //             dataSet.push({ ID: index++, VALUE: element });                    
+        //         });
+        //         exchangeDataMap[exchange] = dataSet;
+        //         responseObject = responseObject.concat(dataSet);
+
+        //     })
+
+        // });
+    } else {
+        return res.send(responseObject);
     }
 
 });
@@ -65,7 +88,7 @@ router.get('/getSelectedItems/:email', (req, res) => {
                 })
                 callback(null, items);
             });
-        }, function(userSelected, callback){
+        }, function (userSelected, callback) {
             let exchanges = [];
             let symbols = [];
             firebaseDB.ref(firebasePath).once('value', (snapshot) => {
@@ -73,7 +96,7 @@ router.get('/getSelectedItems/:email', (req, res) => {
                     //Build Exchange
                     let uniqueExchanges = [...new Set(snapshot.val().map(item => item.Exchange))];
                     uniqueExchanges.forEach((exchange, index) => {
-                        if(userSelected.exchange.includes(exchange))
+                        if (userSelected.exchange.includes(exchange))
                             exchanges.push({ id: index, itemName: exchange })
                     });
                     //Build Symbols
@@ -87,11 +110,11 @@ router.get('/getSelectedItems/:email', (req, res) => {
                     })
 
 
-                    callback({exchange: exchanges, symbols: symbols});
+                    callback({ exchange: exchanges, symbols: symbols });
                 } else {
-                    callback({exchange: exchanges, symbols: symbols});
+                    callback({ exchange: exchanges, symbols: symbols });
                 }
-            });            
+            });
         }
     ], function (result, err) {
         res.send(result)

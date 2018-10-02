@@ -19,14 +19,14 @@ export class AdminLayoutComponent implements OnInit {
     url: string;
     location: Location;
     @ViewChild('sidebar') sidebar: any;
-    @ViewChild(NavbarComponent) navbar: NavbarComponent;
+    // @ViewChild(NavbarComponent) navbar: NavbarComponent;
     constructor( private router: Router, location: Location ) {
       this.location = location;
     }
     ngOnInit() {
-        this._router = this.router.events.filter(event => event instanceof NavigationEnd).subscribe(event => {
-          this.navbar.sidebarClose();
-        });
+        // this._router = this.router.events.filter(event => event instanceof NavigationEnd).subscribe(event => {
+        //   this.navbar.sidebarClose();
+        // });
         const isWindows = navigator.platform.indexOf('Win') > -1 ? true : false;
         if (isWindows) {
            // if we are on windows OS we activate the perfectScrollbar function

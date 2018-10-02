@@ -141,7 +141,6 @@ export class LiveComponent implements OnInit, OnDestroy {
     if(this.exchangeSelectionItems.length === 0){
       this.symbol.reset();
       this.symbolOptions = [];
-      this.symbolSelectedItems = [];
       this.liveGridOptions.api.setRowData([])
       clearTimeout(this.timer);
       this.setSelected();
@@ -178,12 +177,10 @@ export class LiveComponent implements OnInit, OnDestroy {
   }
 
   onSymbolItemSelect(item) {
-    console.log(this.symbolSelectedItems, this.symbolOptions);
     
     if(item)
       this.setSelected();   // A null means that selection is not from grid
     this.rowData = this.symbolSelectedItems.map(symbol=>symbol.data);
-    console.log(this.rowData.length);
     
     this.liveGridOptions.api.setRowData(this.rowData);
     clearTimeout(this.timer);
@@ -240,7 +237,6 @@ export class LiveComponent implements OnInit, OnDestroy {
     })
 
     this.symbolSelectedItems = diff;
-    console.log(this.symbolSelectedItems);    
     this.rowData = this.symbolSelectedItems.map(symbol=>symbol.data);
     this.liveGridOptions.api.setRowData(this.rowData);
     this.setSelected();

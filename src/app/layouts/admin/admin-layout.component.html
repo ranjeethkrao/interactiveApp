@@ -1,10 +1,13 @@
 
 <div class="wrapper">
     <div class="sidebar" data-active-color="white" data-background-color="black">
-        <app-sidebar-cmp></app-sidebar-cmp>
+            <!-- <app-navbar-cmp></app-navbar-cmp> -->
+            <app-sidebar-cmp></app-sidebar-cmp>        
+        
+
     </div>
-    <div class="main-panel">
-        <app-navbar-cmp></app-navbar-cmp>
+    <div class="main-panel">        
+            
         <router-outlet></router-outlet>
         <!-- <div *ngIf="!isMap()">
             <app-footer-cmp></app-footer-cmp>

@@ -2,6 +2,7 @@
 @import url('https://fonts.googleapis.com/css?family=Roboto:300,400,500,700|Material+Icons');
 
 .main-panel .main-content {
-    margin-top: 40px;
-    min-height: calc(100vh - 123px);
+    margin-top: 0px;
+    min-height: 100vh;
+    padding: 0px;
 }

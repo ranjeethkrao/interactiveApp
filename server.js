@@ -2,6 +2,8 @@ const express = require('express');
 const path = require('path');
 const http = require('http');
 const bodyParser = require('body-parser');
+const getstreamApi = require('./magnitudinis-server/routes/getstream/getstream-api');
+
 
 // Get our API routes
 const api = require('./magnitudinis-server/routes/api');
@@ -25,6 +27,7 @@ app.use('/auth', auth.registerRoute);
 app.use('/historic', tradeRoute.histTradeRoute);
 app.use('/live', tradeRoute.liveTradeRoute);
 app.use('/user', users.users);
+app.use('/getstream', getstreamApi.streamApi);
 
 // Catch all other routes and return the index file
 app.get('/*', (req, res) => {

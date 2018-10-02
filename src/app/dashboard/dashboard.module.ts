@@ -6,6 +6,7 @@ import { MdModule } from '../md/md.module';
 
 import { DashboardComponent } from './dashboard.component';
 import { DashboardRoutes } from './dashboard.routing';
+import { TimeAgoPipe } from 'time-ago-pipe';
 
 @NgModule({
     imports: [
@@ -14,7 +15,7 @@ import { DashboardRoutes } from './dashboard.routing';
         FormsModule,
         MdModule
     ],
-    declarations: [DashboardComponent]
+    declarations: [DashboardComponent, TimeAgoPipe]
 })
 
 export class DashboardModule {}
