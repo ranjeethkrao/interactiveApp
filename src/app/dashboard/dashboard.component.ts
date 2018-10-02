@@ -17,36 +17,57 @@ export class DashboardComponent implements OnInit, OnDestroy {
     client: any;
     userFeed: any;
     token: string = '';
-    user: string = 'rao';
+    user: string = 'angular';
     timeline:string = 'stock';
     symbols: string[] = ['rao'];
     tweets: any = [];
     apiKey = 'ax3w5qqemqgz';
     appId = '40753';
-    subscription: any;
+    // subscription: any = null;
     
     constructor(private http: Http){}
 
     ngOnInit(){
-        this.http.get('getstream/token').subscribe(token => {
+        this.http.get('getstream/token/' + this.user).subscribe(token => {
             this.client = stream.connect(this.apiKey, null, this.appId, {location: 'us-east'});
-            this.userFeed = this.client.feed('stock', 'rao', token['_body']);
+            this.userFeed = this.client.feed('stock', this.user, token['_body']);
+            this.userFeed.follow('stock', 'rao');
+            this.userFeed.get().then(data => {
+                data['results'].forEach(update => {
+                    let date = new Date(update.time);                
+                    var newDate = new Date(date.getTime()+date.getTimezoneOffset()*60*1000);
+                    var offset = date.getTimezoneOffset() / 60;
+                    var hours = date.getHours();
+                    newDate.setHours(hours - offset);
+                    update.time = newDate;
+                    this.tweets.push(update);
+                });
+            })
             
-            this.subscription = this.userFeed.subscribe(data => {
-                console.log(data);
-                this.tweets.push(data['new'][0]);
-            }).then(success => {
-                console.log('now listening to changes in realtime');
-            }, err => {
-                alert('something went wrong, check the console logs');
-                console.log(err);
-            });            
+            // this.userFeed.subscribe(data => {
+            //     data['new'].forEach(update => {
+            //         let date = new Date(update.time);                
+            //         var newDate = new Date(date.getTime()+date.getTimezoneOffset()*60*1000);
+            //         var offset = date.getTimezoneOffset() / 60;
+            //         var hours = date.getHours();
+            //         newDate.setHours(hours - offset);
+            //         update.time = newDate;
+            //         this.tweets.push(update);
+            //     });
+            // }).then(success => {
+            //     console.log('now listening to changes in realtime');
+            // }, err => {
+            //     alert('something went wrong, check the console logs');
+            //     console.log(err);
+            // });            
         })
     }
 
     ngOnDestroy(){
-        if(this.subscription)
-            this.subscription.cancel();
+        // console.log(this.subscription);
+        
+        // if(this.subscription)
+        //     this.subscription.cancel();
     }
 
 
