@@ -12,27 +12,28 @@ declare const $: any;
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html'
 })
-export class DashboardComponent implements OnInit, OnDestroy {
+export class DashboardComponent implements OnInit {
 
     client: any;
     userFeed: any;
-    token: string = '';
     user: string = 'angular';
     timeline:string = 'stock';
-    symbols: string[] = ['rao'];
+    symbols: string[] = ['AAPL', 'DISHMAN'];
     tweets: any = [];
-    apiKey = 'ax3w5qqemqgz';
-    appId = '40753';
-    // subscription: any = null;
+    apiKey = '9f9addcd9umc';
+    appId = '42266';
     
     constructor(private http: Http){}
 
     ngOnInit(){
         this.http.get('getstream/token/' + this.user).subscribe(token => {
             this.client = stream.connect(this.apiKey, null, this.appId, {location: 'us-east'});
-            this.userFeed = this.client.feed('stock', this.user, token['_body']);
-            this.userFeed.follow('stock', 'rao');
-            this.userFeed.get().then(data => {
+            this.userFeed = this.client.feed('stock_feed', this.user, token['_body']);
+            this.symbols.forEach(symbol => {
+                this.userFeed.follow('stock_feed', symbol);
+            })
+
+            this.userFeed.get({limit: 10}).then(data => {
                 data['results'].forEach(update => {
                     let date = new Date(update.time);                
                     var newDate = new Date(date.getTime()+date.getTimezoneOffset()*60*1000);
@@ -42,34 +43,28 @@ export class DashboardComponent implements OnInit, OnDestroy {
                     update.time = newDate;
                     this.tweets.push(update);
                 });
-            })
+            });
+
+
             
-            // this.userFeed.subscribe(data => {
-            //     data['new'].forEach(update => {
-            //         let date = new Date(update.time);                
-            //         var newDate = new Date(date.getTime()+date.getTimezoneOffset()*60*1000);
-            //         var offset = date.getTimezoneOffset() / 60;
-            //         var hours = date.getHours();
-            //         newDate.setHours(hours - offset);
-            //         update.time = newDate;
-            //         this.tweets.push(update);
-            //     });
-            // }).then(success => {
-            //     console.log('now listening to changes in realtime');
-            // }, err => {
-            //     alert('something went wrong, check the console logs');
-            //     console.log(err);
-            // });            
+            this.userFeed.subscribe(data => {
+                data['new'].forEach(update => {
+                    let date = new Date(update.time);                
+                    var newDate = new Date(date.getTime()+date.getTimezoneOffset()*60*1000);
+                    var offset = date.getTimezoneOffset() / 60;
+                    var hours = date.getHours();
+                    newDate.setHours(hours - offset);
+                    update.time = newDate;
+                    this.tweets.push(update);
+                });
+            }).then(success => {
+                console.log('now listening to changes in realtime');
+            }, err => {
+                alert('something went wrong, check the console logs');
+                console.log(err);
+            });            
         })
     }
-
-    ngOnDestroy(){
-        // console.log(this.subscription);
-        
-        // if(this.subscription)
-        //     this.subscription.cancel();
-    }
-
 
   // constructor(private navbarTitleService: NavbarTitleService, private notificationService: NotificationService) { }
 //   public tableData: TableData;

@@ -7,9 +7,14 @@ var client = stream.connect(config.API_KEY, config.API_KEY.API_KEY, )
 client = stream.connect(config.API_KEY, config.API_KEY_SECRET, config.APP_ID, { location: config.LOC });
 
 router.get('/addActivity/:user', (req, res) => {
-    let raoFeed = client.feed(config.FEED, req.params.user);
-    activity = {actor: req.params.user, verb: 'tweet', 'object': 1, tweet: 'Hello ' + req.params.user + '!' };
-    let k = raoFeed.addActivity(activity);
+    let stockFeed = client.feed(config.FEED, req.params.user);
+    activity = {
+        actor: req.params.user, 
+        verb: 'tweet',
+        object: 1, 
+        tweet: 'Buy ' + req.params.user + ' @ 1000' 
+    };
+    stockFeed.addActivity(activity);
     res.send('ok')
 });
 

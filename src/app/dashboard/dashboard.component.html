@@ -233,8 +233,8 @@
         </div> -->
 
 
-        <div class="row" *ngFor="let item of tweets">
-            <span >{{item.tweet}} - {{item.time}} - {{item.time | timeAgo}}</span>
+        <div class="row" *ngFor="let update of tweets">
+            <span >{{update.tweet}} - {{update.time | timeAgo}}</span>
         </div>
     </div>
 </div>

@@ -1,7 +1,7 @@
 module.exports = Object.freeze({
-    API_KEY: 'ax3w5qqemqgz',
-    APP_ID: 40753,
-    API_KEY_SECRET: 'hrkzysv87smz48kjrw47efxq89e9bse99v2cgb83yxxwuaxgg8snv4nfmuurbfuz',
+    API_KEY: '9f9addcd9umc',
+    APP_ID: 42266,
+    API_KEY_SECRET: '4atbvsjavkf93ff8qbez56at9x8yrp48mwjjtffy2vxmgge8bd8rhvkfbc62bkze',
     LOC: 'us-east',
-    FEED: 'stock'
+    FEED: 'stock_feed'
 });
