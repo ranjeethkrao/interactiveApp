@@ -55,14 +55,14 @@ export class DashboardComponent implements OnInit {
                     var hours = date.getHours();
                     newDate.setHours(hours - offset);
                     update.time = newDate;
-                    this.tweets.push(update);
+                    this.tweets.unshift(update);
                 });
             }).then(success => {
                 console.log('now listening to changes in realtime');
             }, err => {
-                alert('something went wrong, check the console logs');
+                alert('faye: something went wrong, check the console logs');
                 console.log(err);
-            });            
+            });
         })
     }
 
