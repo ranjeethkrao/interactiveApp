@@ -70,6 +70,7 @@
     "perfect-scrollbar": "^0.8.1",
     "popper.js": "^1.12.5",
     "rxjs": "^5.4.2",
+    "socket.io": "^2.1.1",
     "sweetalert2": "^6.8.0",
     "time-ago-pipe": "1.2.1",
     "tooltip.js": "^1.1.5",

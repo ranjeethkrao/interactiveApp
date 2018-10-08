@@ -12,6 +12,7 @@ import { FeedRoutes } from './feed.routing';
 
 import { HistoricComponent } from './historic/historic.component';
 import { LiveComponent } from './live/live.component';
+import { LiveService } from './live/live.service';
 
 @NgModule({
   imports: [
@@ -29,7 +30,8 @@ import { LiveComponent } from './live/live.component';
   ],
   providers: [
     FeedService,
-    DatePipe
+    DatePipe,
+    LiveService
   ]
 })
 

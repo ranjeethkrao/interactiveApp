@@ -6,9 +6,12 @@ const firebasePath = '/status/result/1/data';
 const async = require('async');
 liveTradeData = {};
 index = 0;
+var io;
 
 firebaseDB.ref(firebasePath).on("child_changed", (snapshot) => {
     liveTradeData[snapshot.ref.key] = snapshot.val();
+    io.emit('update', liveTradeData )
+    liveTradeData = {};
 });
 
 router.get('/getAllExchange', (req, res) => {
@@ -135,5 +138,8 @@ router.post('/setSelectedItems/:email', (req, res) => {
 })
 
 module.exports = {
+    init: (sio) => {
+        io = sio;
+    },
     router: router
 }

@@ -51,6 +51,20 @@ const server = http.createServer(app);
  */
 server.listen(port, () => console.log(`Magnitudinis is running on \nhost : ${host} \nport : ${port}`));
 
+/**
+ * Create Socket and listen for connections
+ */
+const io = require('socket.io')(server);
+io.on('connection', function(socket){
+    console.log('a user connected');
+});
+
+io.on('disconnect', function(socket){
+    console.log('user disconnected');
+});
+tradeRoute.initialize(io);
+  
+
 
 
 

@@ -3,6 +3,7 @@ import { FeedService } from '../feed.service';
 import { FormGroup, AbstractControl, FormBuilder, Validators } from '@angular/forms';
 import { GridOptions, ColumnApi, GridApi } from 'ag-grid';
 import { LoaderService } from '../../shared/loader.service';
+import { LiveService } from './live.service';
 
 @Component({
   selector: 'mg-live',
@@ -30,9 +31,9 @@ export class LiveComponent implements OnInit, OnDestroy {
   public liveTradeFirebaseData: any;
   public rowData = [];
 
-  public timer;
+  // public timer;
 
-  constructor(fb: FormBuilder, private hs: FeedService, private loaderService: LoaderService) {
+  constructor(fb: FormBuilder, private hs: FeedService, private loaderService: LoaderService, private socketService: LiveService) {
 
     this.form = fb.group({
       'symbol': ['', Validators.compose([Validators.required])],
@@ -66,12 +67,12 @@ export class LiveComponent implements OnInit, OnDestroy {
       { headerName: 'Symbol', field: 'Symbol' },
       { headerName: 'Trade', field: 'Trade' },
       { headerName: 'Price', field: 'Price' },
-      { headerName: 'Timestamp', field: 'Date', cellRenderer:'agAnimateShowChangeCellRenderer', comparator: dateComparator, sort: 'desc', suppressSorting: false}
+      { headerName: 'Timestamp', field: 'Date', cellRenderer: 'agAnimateShowChangeCellRenderer', comparator: dateComparator, sort: 'desc', suppressSorting: false }
     ];
     this.liveGridOptions.rowData = [];
 
     function dateComparator(date1, date2) {
-      
+
       var date1Number = new Date(date1).getTime();
       var date2Number = new Date(date2).getTime();
 
@@ -84,15 +85,47 @@ export class LiveComponent implements OnInit, OnDestroy {
       if (date1Number > date2Number) {
         return 1;
       }
-      
+
     }
-    
+
+  }
+
+  private openSocketConnection(): void {
+
+    this.socketService.initSocket();
+
+    this.socketService.onMessage().subscribe((data) => {
+      let updatedItems = [];
+      Object.keys(data).forEach(key => {
+        updatedItems.push(data[key]);
+      });
+
+      let itemsToUpdate = [];
+      let rowNodes = [];
+      updatedItems.forEach(item => {
+        this.liveGridApi.forEachNodeAfterFilterAndSort((node) => {
+          let data = node.data;
+          if (data.Symbol === item.Symbol) {
+            Object.keys(data).forEach(key => {
+              data[key] = item[key]
+            })
+            itemsToUpdate.push(data);
+            rowNodes.push(node);
+          }
+        })
+      });
+
+      this.liveGridApi.flashCells({ rowNodes: rowNodes });
+      this.liveGridApi.updateRowData({ update: itemsToUpdate });
+
+    });
+
   }
 
   ngOnInit() {
     this.loaderService.display(true);
     this.hs.fetchAllExchange().subscribe((data) => {
-      
+
       this.exchangeOptions = [];
       for (let obj of data) {
         this.exchangeOptions.push({
@@ -110,22 +143,23 @@ export class LiveComponent implements OnInit, OnDestroy {
     })
 
     this.loaderService.display(false);
+    this.openSocketConnection();
   }
 
-  onGridReady(params){
+  onGridReady(params) {
     this.liveGridApi = params.api;
     this.liveColumnApi = params.columnApi;
     params.api.sizeColumnsToFit();
   }
 
-  onGridChange(params){
+  onGridChange(params) {
     this.liveGridApi.sizeColumnsToFit();
-    
+
   }
 
   onExchangeItemSelect(item) {
 
-    this.hs.fetchDistinctSymbol(this.exchangeSelectionItems.map(item=>item['itemName'])).subscribe((data) => {
+    this.hs.fetchDistinctSymbol(this.exchangeSelectionItems.map(item => item['itemName'])).subscribe((data) => {
       this.symbolOptions = [];
       for (let obj of data) {
         this.symbolOptions.push({
@@ -137,114 +171,114 @@ export class LiveComponent implements OnInit, OnDestroy {
     });
   }
 
-  onExchangeItemDeselect(item){
-    if(this.exchangeSelectionItems.length === 0){
+  onExchangeItemDeselect(item) {
+    if (this.exchangeSelectionItems.length === 0) {
       this.symbol.reset();
       this.symbolOptions = [];
       this.liveGridOptions.api.setRowData([])
-      clearTimeout(this.timer);
+      // clearTimeout(this.timer);
       this.setSelected();
     } else {
       let exchangeList = this.exchangeSelectionItems.map(item => item.itemName);
       let newSymbolList = this.symbolSelectedItems.filter(item => {
-        if(exchangeList.includes(item.data.Exchange))
+        if (exchangeList.includes(item.data.Exchange))
           return item;
       })
       this.symbolSelectedItems = newSymbolList;
 
       let newSymbolOptionsList = this.symbolOptions.filter(item => {
-        if(exchangeList.includes(item.data.Exchange))
+        if (exchangeList.includes(item.data.Exchange))
           return item;
       })
       this.symbolOptions = newSymbolOptionsList;
 
 
-      this.rowData = this.symbolSelectedItems.map(symbol=>symbol.data);
+      this.rowData = this.symbolSelectedItems.map(symbol => symbol.data);
       this.liveGridOptions.api.setRowData(this.rowData);
       this.setSelected();
     }
 
   }
 
-  onExchangeItemDeselectAll(item){
-      this.symbol.reset();
-      this.symbolOptions = [];
-      this.liveGridOptions.api.setRowData([])
-      clearTimeout(this.timer);
-      this.exchangeSelectionItems = [];
-      this.symbolSelectedItems = [];
-      this.setSelected();
+  onExchangeItemDeselectAll(item) {
+    this.symbol.reset();
+    this.symbolOptions = [];
+    this.liveGridOptions.api.setRowData([])
+    // clearTimeout(this.timer);
+    this.exchangeSelectionItems = [];
+    this.symbolSelectedItems = [];
+    this.setSelected();
   }
 
   onSymbolItemSelect(item) {
-    
-    if(item)
+
+    if (item)
       this.setSelected();   // A null means that selection is not from grid
-    this.rowData = this.symbolSelectedItems.map(symbol=>symbol.data);
-    
+    this.rowData = this.symbolSelectedItems.map(symbol => symbol.data);
+
     this.liveGridOptions.api.setRowData(this.rowData);
-    clearTimeout(this.timer);
-    if(this.symbolSelectedItems.length > 0){
-      this.timeoutTarget(this.liveGridApi);
-    }
+    // clearTimeout(this.timer);
+    // if(this.symbolSelectedItems.length > 0){
+    //   this.timeoutTarget(this.liveGridApi);
+    // }
   }
 
   timeoutTarget(gridApi) {
     this.hs.fetchLiveTradeData().subscribe((data) => {
       let updatedItems = [];
-      Object.keys(data).forEach(key=>{
+      Object.keys(data).forEach(key => {
         updatedItems.push(data[key]);
       });
 
-      let itemsToUpdate  = [];
+      let itemsToUpdate = [];
       let rowNodes = [];
-      updatedItems.forEach(item=>{
-        gridApi.forEachNodeAfterFilterAndSort((node, index)=>{
+      updatedItems.forEach(item => {
+        gridApi.forEachNodeAfterFilterAndSort((node, index) => {
           let data = node.data;
-          if(data.Symbol === item.Symbol){
-            Object.keys(data).forEach(key=>{
+          if (data.Symbol === item.Symbol) {
+            Object.keys(data).forEach(key => {
               data[key] = item[key]
             })
             itemsToUpdate.push(data);
             rowNodes.push(node);
           }
         })
-      });      
-      
-      
+      });
+
+
       gridApi.flashCells({ rowNodes: rowNodes });
       gridApi.updateRowData({ update: itemsToUpdate });
 
-      
+
     });
-    this.timer = setTimeout(this.timeoutTarget.bind(this), 2000, gridApi);
+    // this.timer = setTimeout(this.timeoutTarget.bind(this), 2000, gridApi);
   }
 
-  setSelected(){
+  setSelected() {
     let exchange = this.exchangeSelectionItems.map(item => item.itemName);
     let symbols = this.symbolSelectedItems.map(item => item.itemName);
-    
-    this.hs.setSelectedItems(JSON.parse(localStorage.getItem('user')).email, {exchange: exchange, symbols: symbols}).subscribe(res => {});
+
+    this.hs.setSelectedItems(JSON.parse(localStorage.getItem('user')).email, { exchange: exchange, symbols: symbols }).subscribe(res => { });
   }
 
 
-  deleteRows(){
-    let deletionSymbols = this.liveGridApi.getSelectedNodes().map(node=>node.data.Symbol);
+  deleteRows() {
+    let deletionSymbols = this.liveGridApi.getSelectedNodes().map(node => node.data.Symbol);
     let diff = this.symbolSelectedItems.filter(selectedItem => {
-      if(deletionSymbols.indexOf(selectedItem.itemName) === -1){
+      if (deletionSymbols.indexOf(selectedItem.itemName) === -1) {
         return selectedItem;
       }
     })
 
     this.symbolSelectedItems = diff;
-    this.rowData = this.symbolSelectedItems.map(symbol=>symbol.data);
+    this.rowData = this.symbolSelectedItems.map(symbol => symbol.data);
     this.liveGridOptions.api.setRowData(this.rowData);
     this.setSelected();
-    
+
   }
 
-  ngOnDestroy(){
-    clearTimeout(this.timer);
+  ngOnDestroy() {
+    this.socketService.disConnectSocket();
   }
 
 }

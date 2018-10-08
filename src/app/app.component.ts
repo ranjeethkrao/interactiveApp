@@ -1,5 +1,4 @@
 import { Component, OnInit, ElementRef } from '@angular/core';
-import { Router, ActivatedRoute } from '@angular/router';
 import { LoaderService } from './shared/loader.service';
 
 declare var $: any;
