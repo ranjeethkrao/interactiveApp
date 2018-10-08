@@ -2,7 +2,7 @@ import { Component, OnInit, ElementRef } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { CustomValidators } from 'ng2-validation';
 import * as firebase from 'firebase';
-import { environment } from '../../../environments/environment';
+import { environment } from '../../../environments/environment.prod';
 import swal from 'sweetalert2';
 
 @Component({
