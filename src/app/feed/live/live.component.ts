@@ -62,10 +62,20 @@ export class LiveComponent implements OnInit, OnDestroy {
     };
 
     this.liveGridOptions = <GridOptions>{};
+    
+    function TradeCellRenderer(params) {
+      console.log('params: ', params)
+      let eGui = document.createElement('span');
+      eGui.classList.add(params.value === 'Buy' ? 'red' : 'green');
+      eGui.innerHTML = params.value;
+      return eGui;
+    };
+
+
     this.liveGridOptions.columnDefs = [
       { headerName: 'Exchange', field: 'Exchange' },
       { headerName: 'Symbol', field: 'Symbol' },
-      { headerName: 'Trade', field: 'Trade' },
+      { headerName: 'Trade', field: 'Trade', cellRenderer: TradeCellRenderer },
       { headerName: 'Price', field: 'Price' },
       { headerName: 'Timestamp', field: 'Date', cellRenderer: 'agAnimateShowChangeCellRenderer', comparator: dateComparator, sort: 'desc', suppressSorting: false }
     ];

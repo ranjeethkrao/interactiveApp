@@ -6,3 +6,24 @@
     min-height: 100vh;
     padding: 0px;
 }
+
+.ag-dark .ag-cell-data-changed {
+    background-color: white !important;
+    color: black;
+}
+.ag-dark .ag-cell-data-changed-animation {
+    background-color: transparent;
+    color: #ccc;
+    transition: background-color 5s, color 10s !important;
+    -webkit-transition: background-color 5s, color 10s !important;
+    -moz-transition: background-color 5s, color 10s !important;
+    -o-transition: background-color 5s, color 10s !important;
+}
+
+.red{
+    color: red;
+}
+
+.green{
+    color: green;
+}
